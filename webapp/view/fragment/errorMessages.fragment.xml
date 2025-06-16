@@ -1,0 +1,43 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" class="sapUiSizeCompact" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout">
+	<Dialog id="idFragErrors" title="Errors" contentWidth="700px" contentHeight="600px" showHeader="false">
+		<!--	<NavContainer id="ADispcpaGrp">-->
+		<Page title="Errors While Uploading Roster Assignments" showNavButton="false">
+			<!--	<headerContent>
+					<Button icon="sap-icon://sys-cancel" press="handleFgErrorsClose"></Button>
+				</headerContent>-->
+			<Table id="idTblErrors" items="{jsonValidationErrors>/}" class="sapUiSmallMargin">
+				<columns>
+					<Column width="20%">
+						<Text text="Seq No"/>
+					</Column>
+					<Column width="20%">
+						<Text text="Line No."/>
+					</Column>
+					<Column width="80%">
+						<Text text="Error"/>
+					</Column>
+				</columns>
+				<items>
+					<ColumnListItem>
+						<cells>
+							<!--		<ObjectNumber number="{JsonErrorFinal>Type}" state="{path: 'JsonErrorFinal>Type', formatter: '.formatter.errorColor' }"/>-->
+							<Text text="{jsonValidationErrors>UniqueCount}" class="sapUiSmallMargin"/>
+							<Text text="{jsonValidationErrors>LineNo}" class="sapUiSmallMargin"/>
+							<Text text="{jsonValidationErrors>Message}" class="sapUiSmallMargin"/>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
+			<footer>
+				<Toolbar>
+					<Button text="Close" type="Transparent" press="handleFgErrorsClose" class="sapUiSizeCompact"/>
+					<ToolbarSpacer/>
+				</Toolbar>
+				<!--<Button text="Clear" type="Reject" press="handleFgRosterAssignmentClear" icon="sap-icon://eraser" class="sapUiSizeCompact"/>
+							<Button text="Save" type="Accept" press="handleFgRosterAssignmentSave" icon="sap-icon://save" class="sapUiSizeCompact"/>-->
+			</footer>
+		</Page>
+		<!--	</NavContainer>-->
+	</Dialog>
+</core:FragmentDefinition>

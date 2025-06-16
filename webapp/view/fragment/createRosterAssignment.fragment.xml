@@ -1,0 +1,55 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" class="sapUiSizeCompact" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m"
+	xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout">
+	<Dialog id="idFragCreateRosterAssignment" title="Create Roster Assignment" contentWidth="600px" contentHeight="400px" showHeader="false">
+		<NavContainer id="ADispcpaGrp">
+			<Page title="Create Roster Assignment" showNavButton="false">
+				<!--<headerContent>
+					<Button icon="sap-icon://sys-cancel" press="handleFgRosterAssignmentClose"></Button>
+				</headerContent>-->
+				<l:Grid defaultSpan="L12 M12 S12">
+					<l:content>
+						<f:SimpleForm minWidth="1024" maxContainerCols="2" editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4"
+							emptySpanL="2" emptySpanM="2" columnsL="2" columnsM="2" class="sapUiSizeCompact">
+							<f:content>
+								<!--	<Label text="Choose Roster Name" required="true" />
+								<Input id="idFragChooseRosterName" width="100%"/>-->
+								<Label text="Choose Roster Code" required="true"/>
+								<!--	<Input id="idFragChooseRosterCode" width="100%"/>-->
+								<ComboBox showSecondaryValues="true" id="idFragChooseRosterCode" items="{ path: 'RosterData>/', sorter: { path: 'ROSTER_NAME' }}"
+									width="100%" placeholder="{i18n>rosterFilterTooltip}">
+									<core:ListItem key="{RosterData>ROSTER_CODE}" text="{RosterData>ROSTER_NAME}" additionalText="{RosterData>ROSTER_NAME}"/>
+								</ComboBox>
+								<Label text="Choose Ship" required="true"/>
+								<ComboBox id="idFragChooseShip" showSecondaryValues="true" items="{ path: 'shipList>/', sorter: { path: 'LOCID' } }" width="100%" placeholder="{i18n>shipFilterTooltip}">
+									<core:ListItem key="{shipList>LOCID}" text="{shipList>LOCID}" additionalText="{shipList>LOCDESC}"/>
+								</ComboBox>
+								<!--<Input id="idFragChooseShip" width="100%"/>-->
+								<!--		<ComboBox id="idFragChooseShip" showSecondaryValues="true" id="PlanningShipsFilter" items="{ path: '/ShipMaster', sorter: { path: 'shipId' } }" 
+									placeholder="{i18n>shipFilterTooltip}" selectedKey="{path:'local>/oSelectedShip'}">
+									<core:ListItem key="{shipId}" text="{shipId}" additionalText="{shipDesc}"/>
+								</ComboBox>-->
+								<Label text="Choose Start Date of Assignment" required="true"/>
+								<!--	<DatePicker id="idFragStartDate" displayFormat="yyyy-MM-dd" valueFormat="yyyy-MM-dd"/>-->
+								<DatePicker id="idFragStartDate" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" change="handleChange" class="sapUiSmallMarginBottom"/>
+								<Label text="Choose End Date of Assignment" required="true"/>
+								<DatePicker id="idFragEndDate" valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy" change="handleChange" class="sapUiSmallMarginBottom"/>
+							</f:content>
+						</f:SimpleForm>
+					</l:content>
+				</l:Grid>
+				<footer>
+			
+							<Toolbar>
+								<Button text="Close" type="Transparent" press="handleFgRosterAssignmentClose"/>
+								<ToolbarSpacer/>
+								<Button text="Clear" type="Transparent" press="handleFgRosterAssignmentClear" class="sapUiSizeCompact"/>
+								<Button text="Save" type="Emphasized" press="handleFgRosterAssignmentSave" class="sapUiSizeCompact"/>
+							</Toolbar>
+							<!--<Button text="Clear" type="Reject" press="handleFgRosterAssignmentClear" icon="sap-icon://eraser" class="sapUiSizeCompact"/>
+							<Button text="Save" type="Accept" press="handleFgRosterAssignmentSave" icon="sap-icon://save" class="sapUiSizeCompact"/>-->
+				
+				</footer>
+			</Page>
+		</NavContainer>
+	</Dialog>
+</core:FragmentDefinition>

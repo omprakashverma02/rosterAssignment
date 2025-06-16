@@ -1,0 +1,167 @@
+<mvc:View controllerName="rosterassignmentvk.rosterassignmentvk.controller.Main" xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+	xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:variant="sap.ui.comp.variants" xmlns:tnt="sap.tnt"
+	xmlns:core="sap.ui.core" xmlns:fb="sap.ui.comp.filterbar" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:u="sap.ui.unified">
+	<!-- <Shell id="shell" appWidthLimited="false">
+		<App id="app">
+			<pages> -->
+				<Page title="Roster Assignments" id="page" showHeader="true" titleLevel="H2">
+					<content>
+						<fb:FilterBar showFilterConfiguration="false" useToolbar="false" id="planningFilterBar" reset="onReset" search="onSearch"
+							showRestoreButton="true" showClearButton="true" showRestoreOnFB="true">
+							<fb:filterGroupItems>
+								<fb:FilterGroupItem groupName="__$INTERNAL$" name="A" label="{i18n>rosterFilterLbl}" labelTooltip="{i18n>rosterFilterTooltip}"
+									partOfCurrentVariant="true" visibleInFilterBar="true">
+									<fb:control>
+										<MultiComboBox showSecondaryValues="true" id="rosterFilter" items="{ path: 'RosterData>/', sorter: { path: 'ROSTER_NAME' }}" width="20rem"
+											placeholder="{i18n>rosterFilterTooltip}" selectedKeys="{path:'local>/oSelectedRoster'}">
+											<core:ListItem key="{RosterData>ROSTER_CODE}" text="{RosterData>ROSTER_NAME}" additionalText="{RosterData>ROSTER_NAME}"/>
+										</MultiComboBox>
+									</fb:control>
+								</fb:FilterGroupItem>
+								<fb:FilterGroupItem groupName="__$INTERNAL$" name="B" label="{i18n>shipFilterLbl}" labelTooltip="{i18n>shipFilterTooltip}"
+									partOfCurrentVariant="true" visibleInFilterBar="true">
+									<fb:control>
+										<MultiComboBox showSecondaryValues="true" items="{ path: 'shipList>/', sorter: { path: 'LOCID' }}" width="20rem"
+											placeholder="{i18n>shipFilterTooltip}" selectedKeys="{path:'local>/oSelectedShip'}">
+											<core:ListItem key="{shipList>LOCID}" text="{shipList>LOCID}" additionalText="{shipList>LOCDESC}"/>
+										</MultiComboBox>										
+									</fb:control>
+								</fb:FilterGroupItem>
+								<fb:FilterGroupItem groupName="__$INTERNAL$" name="C" label="{i18n>dateFilterLbl}" labelTooltip="{i18n>dateFilterTooltip}" mandatory="false"
+									partOfCurrentVariant="true" visibleInFilterBar="true">
+									<fb:control>
+										<DateRangeSelection id="idStartDate" dateValue="{path:'local>/oStartDateFrom'}" secondDateValue="{path:'local>/oStartDateTo'}"
+											displayFormat="dd/MM/yyyy" width="25em" change="onDateChange"/>
+									</fb:control>
+								</fb:FilterGroupItem>
+								<!--		<fb:FilterGroupItem groupName="__$INTERNAL$" name="D" label="{i18n>endDateFilterLbl}" labelTooltip="{i18n>endDateFilterTooltip}" mandatory="false"
+									partOfCurrentVariant="true" visibleInFilterBar="true">
+									<fb:control>
+										<DateRangeSelection id="idEndDate" dateValue="{path:'local>/oEndDateFrom'}" secondDateValue="{path:'local>/oEndDateTo'}" displayFormat="dd/MM/yyyy"
+											width="25em" change="onDateChange"/>
+									</fb:control>
+								</fb:FilterGroupItem>-->
+								<!--<fb:FilterGroupItem groupName="__$INTERNAL$" name="B" label="{i18n>FunctionFilterLbl}" labelTooltip="{i18n>FunctionFilterTooltip}"
+									partOfCurrentVariant="true" visibleInFilterBar="true" mandatory="true">
+									<fb:control>
+										<ComboBox id="PlanningFunctionFilterUD" placeholder="{i18n>FunctionFilterTooltip}" change="onChangeFunction($event,'ManningJobsFilter')"
+											showSecondaryValues="true" items="{/FunctionFilter}" selectedKey="{path:'local>/oSelectedFunction'}">
+											<core:ListItem key="{divisionId}" text="{divisionId}" additionalText="{divisionDesc}"/>
+										</ComboBox>
+									</fb:control>
+								</fb:FilterGroupItem>
+						
+								<fb:FilterGroupItem groupName="__$INTERNAL$" name="D" label="{i18n>positionFilterLbl}" labelTooltip="{i18n>positionFilterTooltip}"
+									partOfCurrentVariant="true" visibleInFilterBar="true">
+									<fb:control>
+										<MultiComboBox id="ManningJobsFilter" width="20em" placeholder="{i18n>positionFilterTooltip}"
+											items="{ path: '/UJobs', sorter: { path: 'jobTitleDesc' }}" selectedKeys="{path:'local>/oSelectedPosition'}">
+											<core:Item key="{jobTitleDesc}" text="{jobTitleDesc}"/>
+										</MultiComboBox>
+									</fb:control>
+								</fb:FilterGroupItem>
+								<fb:FilterGroupItem groupName="__$INTERNAL$" name="E" label="{i18n>CountryOfCompanyFilterLbl}" labelTooltip="{i18n>CountryOfCompanyTooltip}"
+									partOfCurrentVariant="true" visibleInFilterBar="true">
+									<fb:control>
+										<MultiComboBox id="CountryOfCompanyFilterUD" placeholder="{i18n>CountryOfCompanyTooltip}"
+											items="{ path: 'JsonCountryOfCompany>/', sorter: { path: 'countryOfCompany' }}" selectedKeys="{path:'local>/oSelectedCountryOfCompany'}">
+											<core:Item key="{JsonCountryOfCompany>countryOfCompany}" text="{JsonCountryOfCompany>countryOfCompany}"/>
+										</MultiComboBox>
+									</fb:control>
+								</fb:FilterGroupItem>
+								<fb:FilterGroupItem groupName="__$INTERNAL$" name="F" label="{i18n>employeeFilterLbl}" labelTooltip="{i18n>employeeFilterTooltip}"
+									partOfCurrentVariant="true" visibleInFilterBar="true">
+									<fb:control>
+										<MultiInput id="multiInputUD" tokenUpdate="EmployeeChange" valueHelpOnly="true" valueHelpRequest="handleEmployeeValueHelpAdd"
+											placeholder="{i18n>employeeFilterTooltip}"/>
+									</fb:control>
+								</fb:FilterGroupItem>-->
+							</fb:filterGroupItems>
+						</fb:FilterBar>
+						<Table id="rosterAssignmentDataTbl" items="{rosterAssignmentData>/}" mode="MultiSelect" growing="true" growingThreshold="1000"
+							growingScrollToLoad="true">
+							<headerToolbar>
+								<OverflowToolbar>
+									<Title text="Roster Assignments" level="H2"/>
+									<ToolbarSpacer/>
+										<Button icon="sap-icon://journey-change" text="Update Assignment Status" tooltip="Update Assignment Status" type="Transparent"
+										press="onUpdateAssignmentStatus">
+										<layoutData>
+											<OverflowToolbarLayoutData priority="NeverOverflow"/>
+										</layoutData>
+									</Button>
+									<Button icon="sap-icon://download" text="Download Template" tooltip="Download template to upload mass roster assignment" type="Transparent"
+										press="onDownloadRosterAssignmentTemplate">
+										<layoutData>
+											<OverflowToolbarLayoutData priority="NeverOverflow"/>
+										</layoutData>
+									</Button>
+									<!--		<Button icon="sap-icon://upload" text="Mass upload" tooltip="Mass Upload Roster Assignment" type="Transparent"
+										press="onUploadMassRosterAssignment">
+										<layoutData>
+											<OverflowToolbarLayoutData priority="NeverOverflow"/>
+										</layoutData>
+									</Button>-->
+									<u:FileUploader id="FileUploaderId" buttonText="Upload File" sameFilenameAllowed="true" iconOnly="false" buttonOnly="true"
+										fileType="XLSX,xlsx" icon="sap-icon://upload" iconFirst="true" change="onUploadMassRosterAssignment"/>
+									<Button icon="sap-icon://add" text="New Assignment" tooltip="Create roster assignment" type="Transparent" press="onCreateRosterAssignment">
+										<layoutData>
+											<OverflowToolbarLayoutData priority="NeverOverflow"/>
+										</layoutData>
+									</Button>
+									<Button icon="sap-icon://delete" text="Delete Assignment" tooltip="Delete roster assignment" type="Transparent"
+										press="onDeleteRosterAssignment">
+										<layoutData>
+											<OverflowToolbarLayoutData priority="NeverOverflow"/>
+										</layoutData>
+									</Button>
+									<Button icon="sap-icon://excel-attachment" text="Export Data" tooltip="Download Data" type="Transparent" press="onExportExcel">
+										<layoutData>
+											<OverflowToolbarLayoutData priority="NeverOverflow"/>
+										</layoutData>
+									</Button>
+									<!--<Button icon="sap-icon://action-settings" press="onPersoButtonPressed">
+										<layoutData>
+											<OverflowToolbarLayoutData priority="NeverOverflow"/>
+										</layoutData>
+									</Button>-->
+								</OverflowToolbar>
+							</headerToolbar>
+							<columns>
+								<Column id="seqNoIdCol" minScreenWidth="Tablet" visible="false" demandPopin="true"><Label text="Roster Header ID"  design="Bold"/></Column>
+								<Column id="rosterNameIdCol" minScreenWidth="Tablet" demandPopin="true"><Label text="Roster Name" design="Bold"/></Column>
+								<Column id="rosterIdCol" minScreenWidth="Tablet" demandPopin="true"><Label text="Roster Code" design="Bold"/></Column>
+								<Column id="shipCol" minScreenWidth="Tablet" demandPopin="true"><Label text="Store" design="Bold"/></Column>
+								<Column id="startDateCol" minScreenWidth="Tablet" demandPopin="true"><Label text="Start Date" design="Bold"/></Column>
+								<Column id="endDateCol" minScreenWidth="Tablet" demandPopin="true"><Label text="End Date" design="Bold"/></Column>
+								<Column id="assignmentStatusCol" demandPopin="true"><Label text="Assignment Status" design="Bold"/></Column>
+								<Column id="assignmentOnCol" minScreenWidth="Tablet" demandPopin="true"><Label text="Modified On" design="Bold"/></Column>
+								<Column id="assignmentByCol" minScreenWidth="Tablet" demandPopin="true"><Label text="Modified By" design="Bold"/></Column>
+							</columns>
+							<items>
+								<ColumnListItem vAlign="Middle">
+									<cells>
+										<Text text="{rosterAssignmentData>ROSTER_HEADER_ID}" visible="false"/>
+										<Text text="{rosterAssignmentData>ROSTER_NAME}"/>
+										<Text text="{rosterAssignmentData>ROSTER_CODE}"/>
+										<Text text="{rosterAssignmentData>SHIP_CODE}"/>
+										<Text text="{path:'rosterAssignmentData>START_DATE', formatter: '.formatter.FormatDate'}"/>
+										<Text text="{path:'rosterAssignmentData>END_DATE', formatter: '.formatter.FormatDate'}"/>
+										<Text text="{rosterAssignmentData>ASSIGNMENT_STATUS}"/>
+										<!--<Text text="{ path: 'rosterAssignmentData>MODIFIED_ON', type: 'sap.ui.model.type.DateTime', formatOptions: { style: 'short' } }"/>-->
+										<!--<Text
+											text="{ path: 'MODIFIED_ON', type: 'sap.ui.model.type.Date', formatOptions: { source: { pattern: 'yyyy-MM-ddTHH:mm:ss' }, pattern: 'MMM dd,yyyy HH:mm:ss' } }"/>-->
+										<Text text="{path:'rosterAssignmentData>MODIFIED_ON', formatter: '.formatter.formatLongDate'}"/>
+										<Text text="{rosterAssignmentData>MODIFIED_BY}"/>
+										<!--	<ObjectStatus active="false" inverted="false" state="{= ${rosterAssignmentData>confirmed} === '1' ? 'Success' : 'Error'}"
+											icon="{= ${rosterAssignmentData>confirmed} === '1' ? 'sap-icon://sys-enter-2' : 'sap-icon://error'}"/>-->
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</content>
+				</Page>
+			<!-- </pages>
+		</App>
+	</Shell> -->
+</mvc:View>

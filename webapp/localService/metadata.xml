@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+    <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="2.0">
+        <Schema Namespace="viking.scheduling.tools.odata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="ManningType">
+                <Key>
+                    <PropertyRef Name="ship" />
+                    <PropertyRef Name="shipdate" />
+                    <PropertyRef Name="job" />
+                </Key>
+                <Property Name="ship" Type="Edm.String" Nullable="false" MaxLength="30" />
+                <Property Name="location" Type="Edm.String" MaxLength="20" />
+                <Property Name="shipdate" Type="Edm.DateTime" Nullable="false" />
+                <Property Name="job" Type="Edm.String" Nullable="false" MaxLength="255" />
+                <Property Name="manningFTE" Type="Edm.Decimal" Precision="10" Scale="2" />
+                <Property Name="createdBy" Type="Edm.String" MaxLength="30" />
+                <Property Name="createdOn" Type="Edm.DateTime" />
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="30" />
+                <Property Name="modifiedOn" Type="Edm.DateTime" />
+            </EntityType>
+            <EntityType Name="UShipsType">
+                <Key>
+                    <PropertyRef Name="locationId" />
+                </Key>
+                <Property Name="locationId" Type="Edm.String" Nullable="false" MaxLength="32" />
+            </EntityType>
+            <EntityType Name="UJobsType">
+                <Key>
+                    <PropertyRef Name="jobTitleDesc" />
+                </Key>
+                <Property Name="jobTitleDesc" Type="Edm.String" Nullable="false" MaxLength="32" />
+                <Property Name="divisionId" Type="Edm.String" MaxLength="128" />
+            </EntityType>
+            <EntityType Name="UShipJobsType">
+                <Key>
+                    <PropertyRef Name="locationId" />
+                    <PropertyRef Name="jobTitleDesc" />
+                </Key>
+                <Property Name="locationId" Type="Edm.String" Nullable="false" MaxLength="32" />
+                <Property Name="jobTitleDesc" Type="Edm.String" Nullable="false" MaxLength="32" />
+            </EntityType>
+            <EntityType Name="UEmployeesoldType">
+                <Key>
+                    <PropertyRef Name="userId" />
+                </Key>
+                <Property Name="locationId" Type="Edm.String" MaxLength="128" />
+                <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="firstName" Type="Edm.String" MaxLength="128" />
+                <Property Name="lastName" Type="Edm.String" MaxLength="128" />
+                <Property Name="contractStartDate" Type="Edm.DateTime" />
+                <Property Name="contractEndDate" Type="Edm.DateTime" />
+                <Property Name="jobTitle" Type="Edm.String" MaxLength="32" />
+                <Property Name="gender" Type="Edm.String" MaxLength="2" />
+                <Property Name="nationality" Type="Edm.String" MaxLength="40" />
+            </EntityType>
+            <EntityType Name="UEmployeeseblType">
+                <Key>
+                    <PropertyRef Name="userId" />
+                </Key>
+                <Property Name="locationId" Type="Edm.String" MaxLength="128" />
+                <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="firstName" Type="Edm.String" MaxLength="128" />
+                <Property Name="lastName" Type="Edm.String" MaxLength="128" />
+                <Property Name="contractStartDate" Type="Edm.DateTime" />
+                <Property Name="contractEndDate" Type="Edm.DateTime" />
+                <Property Name="jobTitle" Type="Edm.String" MaxLength="32" />
+                <Property Name="gender" Type="Edm.String" MaxLength="2" />
+                <Property Name="nationality" Type="Edm.String" MaxLength="40" />
+            </EntityType>
+            <EntityType Name="WorkScheduleStatus1Type">
+                <Key>
+                    <PropertyRef Name="schedulestatus" />
+                </Key>
+                <Property Name="schedulestatus" Type="Edm.String" Nullable="false" MaxLength="5" />
+                <Property Name="shiftCodeDesc" Type="Edm.String" MaxLength="128" />
+                <Property Name="EffectiveStartDate" Type="Edm.DateTime" />
+                <Property Name="EffectiveEndDate" Type="Edm.DateTime" />
+                <Property Name="Status" Type="Edm.String" MaxLength="15" />
+                <Property Name="StartTime" Type="Edm.Time" />
+                <Property Name="EndTIme" Type="Edm.Time" />
+                <Property Name="Code" Type="Edm.String" Nullable="false" MaxLength="5" />
+            </EntityType>
+            <EntityType Name="WorkScheduleStatusType">
+                <Key>
+                    <PropertyRef Name="GENERATED_ID" />
+                </Key>
+                <Property Name="GENERATED_ID" Type="Edm.String" Nullable="false" MaxLength="40" />
+                <Property Name="Code" Type="Edm.String" MaxLength="5" />
+                <Property Name="VStartTime" Type="Edm.Time" />
+                <Property Name="VEndTIme" Type="Edm.Time" />
+                <Property Name="schedulestatus" Type="Edm.String" MaxLength="5" />
+                <Property Name="shiftCodeDesc" Type="Edm.String" MaxLength="128" />
+                <Property Name="EffectiveStartDate" Type="Edm.DateTime" />
+                <Property Name="EffectiveEndDate" Type="Edm.DateTime" />
+                <Property Name="Status" Type="Edm.String" MaxLength="15" />
+                <Property Name="StartTime" Type="Edm.Time" />
+                <Property Name="EndTIme" Type="Edm.Time" />
+                <Property Name="slots" Type="Edm.String" MaxLength="500" />
+            </EntityType>
+            <EntityType Name="UEmployeesType">
+                <Key>
+                    <PropertyRef Name="userId" />
+                    <PropertyRef Name="locationId" />
+                    <PropertyRef Name="jobTitle" />
+                </Key>
+                <Property Name="puserId" Type="Edm.String" MaxLength="100" />
+                <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="firstName" Type="Edm.String" MaxLength="128" />
+                <Property Name="lastName" Type="Edm.String" MaxLength="128" />
+                <Property Name="locationId" Type="Edm.String" Nullable="false" MaxLength="128" />
+                <Property Name="contractStartDate" Type="Edm.DateTime" />
+                <Property Name="contractEndDate" Type="Edm.DateTime" />
+                <Property Name="contractNumber" Type="Edm.Int32" />
+                <Property Name="jobTitle" Type="Edm.String" Nullable="false" MaxLength="128" />
+                <Property Name="gender" Type="Edm.String" MaxLength="128" />
+                <Property Name="nationality" Type="Edm.String" MaxLength="128" />
+                <Property Name="functions" Type="Edm.String" MaxLength="50" />
+            </EntityType>
+            <EntityType Name="ShipFilterRoleAssignmentType">
+                <Key>
+                    <PropertyRef Name="userId" />
+                </Key>
+                <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="ShipDesc" Type="Edm.String" MaxLength="128" />
+                <Property Name="puserId" Type="Edm.String" MaxLength="100" />
+                <Property Name="ship" Type="Edm.String" MaxLength="50" />
+            </EntityType>
+            <EntityType Name="BoardingandLodgingType">
+                <Key>
+                    <PropertyRef Name="userId" />
+                </Key>
+                <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="OnboardCount" Type="Edm.Int64" />
+                <Property Name="OffboardCount" Type="Edm.Int64" />
+            </EntityType>
+            <EntityType Name="EXTERNALTIMEDATAType">
+                <Key>
+                    <PropertyRef Name="GENERATED_ID" />
+                </Key>
+                <Property Name="GENERATED_ID" Type="Edm.String" Nullable="false" MaxLength="40" />
+                <Property Name="userId" Type="Edm.String" MaxLength="100" />
+                <Property Name="offBoard_onBoard" Type="Edm.String" MaxLength="50" />
+                <Property Name="workdate" Type="Edm.DateTime" />
+                <Property Name="TimeType" Type="Edm.String" MaxLength="50" />
+                <Property Name="StartTime" Type="Edm.Time" />
+                <Property Name="deleteExternalTime" Type="Edm.String" MaxLength="50" />
+                <Property Name="EndTIme" Type="Edm.Time" />
+            </EntityType>
+            <EntityType Name="ShiftTimingType">
+                <Key>
+                    <PropertyRef Name="Code" />
+                    <PropertyRef Name="ShiftCode" />
+                    <PropertyRef Name="Country" />
+                    <PropertyRef Name="JobCodeId" />
+                </Key>
+                <Property Name="Code" Type="Edm.String" Nullable="false" MaxLength="5" />
+                <Property Name="ShiftCode" Type="Edm.String" Nullable="false" MaxLength="5" />
+                <Property Name="shiftCodeDesc" Type="Edm.String" MaxLength="128" />
+                <Property Name="EffectiveStartDate" Type="Edm.DateTime" />
+                <Property Name="EffectiveEndDate" Type="Edm.DateTime" />
+                <Property Name="Status" Type="Edm.String" MaxLength="15" />
+                <Property Name="StartTime" Type="Edm.Time" />
+                <Property Name="EndTIme" Type="Edm.Time" />
+                <Property Name="VStartTime" Type="Edm.Time" />
+                <Property Name="VEndTIme" Type="Edm.Time" />
+                <Property Name="Country" Type="Edm.String" Nullable="false" DefaultValue="" MaxLength="128" />
+                <Property Name="JobCodeId" Type="Edm.String" Nullable="false" DefaultValue="" MaxLength="128" />
+            </EntityType>
+            <EntityType Name="WorkStatusType">
+                <Key>
+                    <PropertyRef Name="workstatus" />
+                </Key>
+                <Property Name="workstatus" Type="Edm.String" Nullable="false" MaxLength="5" />
+                <Property Name="LookupName" Type="Edm.String" MaxLength="30" />
+                <Property Name="ContractDayGroup" Type="Edm.String" MaxLength="30" />
+                <Property Name="OnOffboard" Type="Edm.String" MaxLength="20" />
+                <Property Name="Day" Type="Edm.String" MaxLength="10" />
+                <Property Name="HexColor" Type="Edm.String" MaxLength="20" />
+                <Property Name="backgroundHexaCode" Type="Edm.String" MaxLength="20" />
+                <Property Name="ExternalCodeSF" Type="Edm.String" MaxLength="20" />
+                <Property Name="externalCodeOnboard" Type="Edm.String" MaxLength="20" />
+                <Property Name="Interface" Type="Edm.String" MaxLength="20" />
+                <Property Name="vacationCalculation" Type="Edm.String" MaxLength="20" />
+                <Property Name="Selectable" Type="Edm.String" MaxLength="10" />
+            </EntityType>
+            <EntityType Name="PlanningScheduleType">
+                <Key>
+                    <PropertyRef Name="userId" />
+                    <PropertyRef Name="location" />
+                    <PropertyRef Name="jobTitle" />
+                    <PropertyRef Name="workdate" />
+                </Key>
+                <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="location" Type="Edm.String" Nullable="false" MaxLength="30" />
+                <Property Name="jobTitle" Type="Edm.String" Nullable="false" MaxLength="32" />
+                <Property Name="portID" Type="Edm.String" MaxLength="20" />
+                <Property Name="workdate" Type="Edm.DateTime" Nullable="false" />
+                <Property Name="sNo" Type="Edm.Int64" />
+                <Property Name="planningstatus" Type="Edm.String" MaxLength="10" />
+                <Property Name="schedulingstatus" Type="Edm.String" MaxLength="5" />
+                <Property Name="planningcreatedBy" Type="Edm.String" MaxLength="30" />
+                <Property Name="planningcreatedOn" Type="Edm.DateTime" />
+                <Property Name="planningmodifiedBy" Type="Edm.String" MaxLength="30" />
+                <Property Name="planningmodifiedOn" Type="Edm.DateTime" />
+                <Property Name="schedulingcreatedBy" Type="Edm.String" MaxLength="30" />
+                <Property Name="schedulingcreatedOn" Type="Edm.DateTime" />
+                <Property Name="schedulingmodifiedBy" Type="Edm.String" MaxLength="30" />
+                <Property Name="schedulingmodifiedOn" Type="Edm.DateTime" />
+                <Property Name="daycloser" Type="Edm.String" MaxLength="1" />
+                <Property Name="confirmed" Type="Edm.String" MaxLength="1" />
+                <Property Name="oldplanningstatus" Type="Edm.String" MaxLength="10" />
+                <Property Name="workdaystatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="timesheetstatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="vacationstatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="offBoard_onBoard" Type="Edm.String" MaxLength="50" />
+                <Property Name="positionStatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="BoardandLodgingStatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="TimesheetReversalStatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="delPlannedStatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="StepUpStatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="Old_offBoard_onBoard" Type="Edm.String" MaxLength="50" />
+                <Property Name="MealAllowanceStatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="TimesheetCancelledStatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="TimeoffCancelledStatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="30" />
+                <Property Name="modifiedOn" Type="Edm.DateTime" />
+                <Property Name="contractNumber" Type="Edm.Int64" />
+                <Property Name="BoardandMealReverseStatus" Type="Edm.String" MaxLength="15" />
+                <Property Name="IntervalPlanningStatus" Type="Edm.String" MaxLength="5" />
+                <Property Name="Slots" Type="Edm.String" MaxLength="255" />
+                <Property Name="WorkdayconfirmationDate" Type="Edm.DateTime" />
+                <Property Name="roasterPlanned" Type="Edm.String" DefaultValue="N" MaxLength="1" />
+                <Property Name="roasterDate" Type="Edm.DateTime" />
+                <Property Name="roasterBy" Type="Edm.String" MaxLength="30" />
+                <Property Name="stepUpstepDown" Type="Edm.String" MaxLength="30" />
+                <Property Name="oldlocation" Type="Edm.String" MaxLength="30" />
+            </EntityType>
+            <EntityType Name="TimeandAbsenseType">
+                <Key>
+                    <PropertyRef Name="Code" />
+                </Key>
+                <Property Name="Code" Type="Edm.String" Nullable="false" MaxLength="5" />
+                <Property Name="LookupName" Type="Edm.String" MaxLength="30" />
+                <Property Name="ContractDayGroup" Type="Edm.String" MaxLength="30" />
+                <Property Name="OnOffboard" Type="Edm.String" MaxLength="20" />
+                <Property Name="Day" Type="Edm.String" MaxLength="10" />
+                <Property Name="HexColor" Type="Edm.String" MaxLength="20" />
+                <Property Name="backgroundHexaCode" Type="Edm.String" MaxLength="20" />
+                <Property Name="ExternalCodeSF" Type="Edm.String" MaxLength="20" />
+                <Property Name="externalCodeOnboard" Type="Edm.String" MaxLength="20" />
+                <Property Name="Interface" Type="Edm.String" MaxLength="20" />
+                <Property Name="vacationCalculation" Type="Edm.String" MaxLength="20" />
+                <Property Name="DefaultShiftCode" Type="Edm.String" MaxLength="5" />
+                <Property Name="Selectable" Type="Edm.String" MaxLength="10" />
+                <Property Name="SequenceNo" Type="Edm.Int64" />
+            </EntityType>
+            <EntityType Name="RefInterfaceType">
+                <Key>
+                    <PropertyRef Name="sNo" />
+                </Key>
+                <Property Name="sNo" Type="Edm.Int64" Nullable="false" />
+                <Property Name="Interface" Type="Edm.String" MaxLength="30" />
+                <Property Name="userId" Type="Edm.String" MaxLength="100" />
+                <Property Name="location" Type="Edm.String" MaxLength="30" />
+                <Property Name="jobTitle" Type="Edm.String" MaxLength="32" />
+                <Property Name="portID" Type="Edm.String" MaxLength="20" />
+                <Property Name="workdate" Type="Edm.DateTime" />
+                <Property Name="planningstatus" Type="Edm.String" MaxLength="5" />
+                <Property Name="planningmodifiedOn" Type="Edm.DateTime" />
+                <Property Name="MsgId" Type="Edm.String" MaxLength="50" />
+                <Property Name="Status" Type="Edm.String" MaxLength="10" />
+            </EntityType>
+            <EntityType Name="FunctionFilterType">
+                <Key>
+                    <PropertyRef Name="divisionId" />
+                </Key>
+                <Property Name="divisionId" Type="Edm.String" Nullable="false" MaxLength="128" />
+                <Property Name="divisionDesc" Type="Edm.String" MaxLength="32" />
+            </EntityType>
+            <EntityType Name="User_permissionType">
+                <Key>
+                    <PropertyRef Name="userId" />
+                    <PropertyRef Name="TargetRole" />
+                    <PropertyRef Name="Applevel" />
+                </Key>
+                <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="TargetRole" Type="Edm.String" Nullable="false" MaxLength="25" />
+                <Property Name="Role" Type="Edm.String" Nullable="false" MaxLength="25" />
+                <Property Name="Applevel" Type="Edm.String" Nullable="false" MaxLength="10" />
+                <Property Name="Permissionread" Type="Edm.String" MaxLength="1" />
+                <Property Name="Permissionwrite" Type="Edm.String" MaxLength="1" />
+                <Property Name="Permissionupdate" Type="Edm.String" MaxLength="1" />
+                <Property Name="Permissiondelete" Type="Edm.String" MaxLength="1" />
+                <Property Name="TargetRoleID" Type="Edm.String" MaxLength="35" />
+                <Property Name="FirstName" Type="Edm.String" MaxLength="125" />
+                <Property Name="LastName" Type="Edm.String" MaxLength="125" />
+                <Property Name="EmployeeID" Type="Edm.String" MaxLength="100" />
+                <Property Name="FunctionRead" Type="Edm.String" MaxLength="100" />
+                <Property Name="PastDateNonEditable" Type="Edm.String" MaxLength="100" />
+            </EntityType>
+            <EntityType Name="AuditLogHeaderType">
+                <Key>
+                    <PropertyRef Name="LogId" />
+                </Key>
+                <Property Name="LogId" Type="Edm.Int64" Nullable="false" />
+                <Property Name="Interface" Type="Edm.String" MaxLength="30" />
+                <Property Name="JobStatus" Type="Edm.String" MaxLength="10" />
+                <Property Name="StartTimestamp" Type="Edm.DateTime" />
+                <Property Name="EndTimestamp" Type="Edm.DateTime" />
+                <Property Name="SchedulerUserId" Type="Edm.String" MaxLength="15" />
+                <Property Name="CPIMsgId" Type="Edm.String" MaxLength="50" />
+                <Property Name="RequestCount" Type="Edm.String" MaxLength="10" />
+            </EntityType>
+            <EntityType Name="AuditLogItemsType">
+                <Key>
+                    <PropertyRef Name="LogId" />
+                    <PropertyRef Name="SequenceId" />
+                </Key>
+                <Property Name="LogId" Type="Edm.Int64" Nullable="false" />
+                <Property Name="SequenceId" Type="Edm.Int32" Nullable="false" />
+                <Property Name="ObjectId" Type="Edm.String" MaxLength="128" />
+                <Property Name="Date" Type="Edm.DateTime" />
+                <Property Name="Status" Type="Edm.String" MaxLength="10" />
+                <Property Name="ErrorType" Type="Edm.String" MaxLength="15" />
+                <Property Name="Errorid" Type="Edm.String" MaxLength="20" />
+                <Property Name="ErrorDescription" Type="Edm.String" MaxLength="500" />
+            </EntityType>
+            <EntityType Name="VacationBalanceType">
+                <Key>
+                    <PropertyRef Name="timeAccount" />
+                </Key>
+                <Property Name="timeAccount" Type="Edm.String" Nullable="false" MaxLength="50" />
+                <Property Name="userId" Type="Edm.String" MaxLength="100" />
+                <Property Name="Balance" Type="Edm.Decimal" Precision="15" Scale="3" />
+                <Property Name="Vacationtype" Type="Edm.String" MaxLength="30" />
+                <Property Name="timeUnit" Type="Edm.String" MaxLength="10" />
+                <Property Name="accountClosed" Type="Edm.String" MaxLength="10" />
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="30" />
+                <Property Name="modifiedOn" Type="Edm.DateTime" />
+            </EntityType>
+            <EntityType Name="BreakTimeTypeType">
+                <Key>
+                    <PropertyRef Name="Code" />
+                    <PropertyRef Name="shiftCode" />
+                    <PropertyRef Name="slotNo" />
+                </Key>
+                <Property Name="Code" Type="Edm.String" Nullable="false" MaxLength="5" />
+                <Property Name="shiftCode" Type="Edm.String" Nullable="false" MaxLength="5" />
+                <Property Name="slotNo" Type="Edm.Int64" Nullable="false" />
+                <Property Name="startTime" Type="Edm.Time" />
+                <Property Name="endTime" Type="Edm.Time" />
+                <Property Name="modifiedBy" Type="Edm.String" DefaultValue="SCH_ROOT" MaxLength="35" />
+                <Property Name="modifiedOn" Type="Edm.DateTime" />
+            </EntityType>
+            <EntityType Name="AuditReportHeaderType">
+                <Key>
+                    <PropertyRef Name="LogId" />
+                </Key>
+                <Property Name="LogId" Type="Edm.Int64" Nullable="false" />
+                <Property Name="Interface" Type="Edm.String" MaxLength="30" />
+                <Property Name="JobStatus" Type="Edm.String" MaxLength="10" />
+                <Property Name="StartTimestamp" Type="Edm.DateTime" />
+                <Property Name="EndTimestamp" Type="Edm.DateTime" />
+                <Property Name="SchedulerUserId" Type="Edm.String" MaxLength="15" />
+                <Property Name="CPIMsgId" Type="Edm.String" MaxLength="50" />
+                <Property Name="Duration" Type="Edm.Int64" />
+                <Property Name="TotRec" Type="Edm.Int64" />
+                <Property Name="ErrRec" Type="Edm.Int64" />
+                <Property Name="BErrRec" Type="Edm.Int64" />
+                <NavigationProperty Name="navAuditReportItems" Relationship="viking.scheduling.tools.odata.navAuditReportItemsType" FromRole="AuditReportHeaderPrincipal" ToRole="AuditReportItemsDependent" />
+            </EntityType>
+            <EntityType Name="AuditReportItemsType">
+                <Key>
+                    <PropertyRef Name="LogId" />
+                    <PropertyRef Name="SequenceId" />
+                </Key>
+                <Property Name="LogId" Type="Edm.Int64" Nullable="false" />
+                <Property Name="SequenceId" Type="Edm.Int32" Nullable="false" />
+                <Property Name="ErrorDescription" Type="Edm.String" MaxLength="500" />
+                <Property Name="Interface" Type="Edm.String" MaxLength="30" />
+                <Property Name="Errorid" Type="Edm.String" MaxLength="20" />
+                <Property Name="ErrorType" Type="Edm.String" MaxLength="15" />
+                <Property Name="ObjectId" Type="Edm.String" MaxLength="128" />
+                <Property Name="Status" Type="Edm.String" MaxLength="10" />
+                <Property Name="Date" Type="Edm.DateTime" />
+                <Property Name="contractStartDate" Type="Edm.DateTime" />
+                <Property Name="contractEndDate" Type="Edm.DateTime" />
+                <Property Name="ship" Type="Edm.String" MaxLength="128" />
+                <Property Name="firstName" Type="Edm.String" MaxLength="128" />
+                <Property Name="lastName" Type="Edm.String" MaxLength="128" />
+                <Property Name="jobTitle" Type="Edm.String" MaxLength="32" />
+            </EntityType>
+            <EntityType Name="TimeEMPLOYEESType">
+                <Key>
+                    <PropertyRef Name="userId" />
+                </Key>
+                <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="timeAccountType" Type="Edm.String" MaxLength="30" />
+                <Property Name="contractStartDate" Type="Edm.DateTime" />
+                <Property Name="contractEndDate" Type="Edm.DateTime" />
+            </EntityType>
+            <EntityType Name="RoleassignmentType">
+                <Key>
+                    <PropertyRef Name="srNo" />
+                </Key>
+                <Property Name="srNo" Type="Edm.String" Nullable="false" MaxLength="10" />
+                <Property Name="userId" Type="Edm.String" MaxLength="100" />
+                <Property Name="TargetRole" Type="Edm.String" MaxLength="25" />
+                <Property Name="TargetRoleID" Type="Edm.String" MaxLength="35" />
+                <Property Name="modifiedBy" Type="Edm.String" MaxLength="35" />
+                <Property Name="modifiedOn" Type="Edm.DateTime" />
+                <Property Name="EmployeeID" Type="Edm.String" MaxLength="100" />
+                <Property Name="FirstName" Type="Edm.String" MaxLength="125" />
+                <Property Name="LastName" Type="Edm.String" MaxLength="125" />
+                <Property Name="PlanningRole" Type="Edm.String" MaxLength="2" />
+            </EntityType>
+            <EntityType Name="TargetRoleDefinationType">
+                <Key>
+                    <PropertyRef Name="TargetRole" />
+                    <PropertyRef Name="Role" />
+                    <PropertyRef Name="Applevel" />
+                </Key>
+                <Property Name="TargetRole" Type="Edm.String" Nullable="false" MaxLength="25" />
+                <Property Name="Role" Type="Edm.String" Nullable="false" MaxLength="25" />
+                <Property Name="Applevel" Type="Edm.String" Nullable="false" MaxLength="10" />
+                <Property Name="Permissionread" Type="Edm.String" MaxLength="1" />
+                <Property Name="Permissionwrite" Type="Edm.String" MaxLength="1" />
+                <Property Name="Permissionupdate" Type="Edm.String" MaxLength="1" />
+                <Property Name="Permissiondelete" Type="Edm.String" MaxLength="1" />
+                <Property Name="flpRole" Type="Edm.String" MaxLength="25" />
+                <Property Name="TargetRoleID" Type="Edm.String" MaxLength="35" />
+                <Property Name="FunctionRead" Type="Edm.String" MaxLength="100" />
+                <Property Name="PastDateNonEditable" Type="Edm.String" MaxLength="100" />
+            </EntityType>
+            <EntityType Name="Role_Matrix_viewType">
+                <Key>
+                    <PropertyRef Name="userId" />
+                </Key>
+                <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="TargetRole" Type="Edm.String" MaxLength="25" />
+                <Property Name="RoleName" Type="Edm.String" MaxLength="35" />
+                <Property Name="PuserId" Type="Edm.String" MaxLength="100" />
+                <Property Name="FirstName" Type="Edm.String" MaxLength="128" />
+                <Property Name="LastName" Type="Edm.String" MaxLength="128" />
+                <Property Name="srNo" Type="Edm.String" Nullable="false" MaxLength="10" />
+            </EntityType>
+            <EntityType Name="Authority_ReportType">
+                <Key>
+                    <PropertyRef Name="GENERATED_ID" />
+                </Key>
+                <Property Name="GENERATED_ID" Type="Edm.String" Nullable="false" MaxLength="40" />
+                <Property Name="portName" Type="Edm.String" MaxLength="1000" />
+                <Property Name="userId" Type="Edm.String" MaxLength="100" />
+                <Property Name="location" Type="Edm.String" MaxLength="30" />
+                <Property Name="jobTitle" Type="Edm.String" MaxLength="32" />
+                <Property Name="portID" Type="Edm.String" MaxLength="20" />
+                <Property Name="workdate" Type="Edm.DateTime" />
+                <Property Name="planningstatus" Type="Edm.String" MaxLength="10" />
+                <Property Name="schedulingstatus" Type="Edm.String" MaxLength="5" />
+                <Property Name="firstName" Type="Edm.String" MaxLength="128" />
+                <Property Name="lastName" Type="Edm.String" MaxLength="128" />
+                <Property Name="divisionId" Type="Edm.String" MaxLength="32" />
+                <Property Name="departmentId" Type="Edm.String" MaxLength="32" />
+                <Property Name="departmentDesc" Type="Edm.String" MaxLength="32" />
+                <Property Name="Slots" Type="Edm.String" MaxLength="255" />
+                <Property Name="name" Type="Edm.String" MaxLength="256" />
+            </EntityType>
+            <EntityType Name="TimeSheetReversalType">
+                <Key>
+                    <PropertyRef Name="GENERATED_ID" />
+                </Key>
+                <Property Name="GENERATED_ID" Type="Edm.String" Nullable="false" MaxLength="40" />
+                <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="workdate" Type="Edm.DateTime" Nullable="false" />
+                <Property Name="accountType" Type="Edm.String" Nullable="false" MaxLength="15" />
+            </EntityType>
+            <EntityType Name="WORKDAYCOLSUREType">
+                <Key>
+                    <PropertyRef Name="DIVISIONID" />
+                    <PropertyRef Name="LOCATIONID" />
+                    <PropertyRef Name="CLOSUREDATE" />
+                </Key>
+                <Property Name="DIVISIONID" Type="Edm.String" Nullable="false" MaxLength="128" />
+                <Property Name="LOCATIONID" Type="Edm.String" Nullable="false" MaxLength="32" />
+                <Property Name="CLOSUREDATE" Type="Edm.DateTime" Nullable="false" />
+                <Property Name="CLOSEDDATE" Type="Edm.DateTime" />
+                <Property Name="CLOSEDBY" Type="Edm.String" MaxLength="30" />
+            </EntityType>
+            <EntityType Name="companyMasterType">
+                <Key>
+                    <PropertyRef Name="companyId" />
+                </Key>
+                <Property Name="companyId" Type="Edm.String" Nullable="false" MaxLength="128" />
+                <Property Name="companyDesc" Type="Edm.String" MaxLength="32" />
+            </EntityType>
+            <EntityType Name="divisionMasterType">
+                <Key>
+                    <PropertyRef Name="divisionId" />
+                </Key>
+                <Property Name="divisionId" Type="Edm.String" Nullable="false" MaxLength="128" />
+                <Property Name="divisionDesc" Type="Edm.String" MaxLength="32" />
+            </EntityType>
+            <EntityType Name="operationsMasterType">
+                <Key>
+                    <PropertyRef Name="operations" />
+                </Key>
+                <Property Name="operations" Type="Edm.String" Nullable="false" MaxLength="288" />
+                <Property Name="operationId" Type="Edm.String" MaxLength="128" />
+                <Property Name="operationDesc" Type="Edm.String" MaxLength="128" />
+                <Property Name="companyId" Type="Edm.String" MaxLength="32" />
+                <Property Name="companyDesc" Type="Edm.String" MaxLength="32" />
+            </EntityType>
+            <EntityType Name="ShipMasterType">
+                <Key>
+                    <PropertyRef Name="shipId" />
+                </Key>
+                <Property Name="shipId" Type="Edm.String" Nullable="false" MaxLength="32" />
+                <Property Name="shipDesc" Type="Edm.String" MaxLength="32" />
+            </EntityType>
+            <EntityType Name="ShipMasterNewType">
+                <Key>
+                    <PropertyRef Name="shipId" />
+                </Key>
+                <Property Name="shipId" Type="Edm.String" Nullable="false" MaxLength="32" />
+                <Property Name="shipDesc" Type="Edm.String" MaxLength="32" />
+                <Property Name="divisionId" Type="Edm.String" MaxLength="128" />
+            </EntityType>
+            <EntityType Name="operationsMasterNewType">
+                <Key>
+                    <PropertyRef Name="operations" />
+                </Key>
+                <Property Name="operations" Type="Edm.String" Nullable="false" MaxLength="256" />
+                <Property Name="operationId" Type="Edm.String" MaxLength="128" />
+                <Property Name="operationDesc" Type="Edm.String" MaxLength="128" />
+            </EntityType>
+            <EntityType Name="User_permission_DataType">
+                <Key>
+                    <PropertyRef Name="userId" />
+                    <PropertyRef Name="TargetRole" />
+                    <PropertyRef Name="Role" />
+                    <PropertyRef Name="Applevel" />
+                </Key>
+                <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="TargetRole" Type="Edm.String" Nullable="false" MaxLength="25" />
+                <Property Name="Role" Type="Edm.String" Nullable="false" MaxLength="25" />
+                <Property Name="Applevel" Type="Edm.String" Nullable="false" MaxLength="10" />
+                <Property Name="Permissionread" Type="Edm.String" MaxLength="1" />
+                <Property Name="Permissionwrite" Type="Edm.String" MaxLength="1" />
+                <Property Name="Permissionupdate" Type="Edm.String" MaxLength="1" />
+                <Property Name="Permissiondelete" Type="Edm.String" MaxLength="1" />
+                <Property Name="RoleDesc" Type="Edm.String" MaxLength="128" />
+                <Property Name="DApplevel" Type="Edm.String" Nullable="false" MaxLength="10" />
+                <Property Name="levelValue" Type="Edm.String" Nullable="false" MaxLength="100" />
+                <Property Name="EmployeeID" Type="Edm.String" MaxLength="100" />
+                <Property Name="FunctionRead" Type="Edm.String" MaxLength="100" />
+                <Property Name="PastDateNonEditable" Type="Edm.String" MaxLength="100" />
+            </EntityType>
+            <EntityType Name="PublicHolidayConfigType">
+                <Key>
+                    <PropertyRef Name="Date" />
+                    <PropertyRef Name="Country" />
+                </Key>
+                <Property Name="Date" Type="Edm.DateTime" Nullable="false" />
+                <Property Name="Country" Type="Edm.String" Nullable="false" MaxLength="50" />
+                <Property Name="HolidayDesc" Type="Edm.String" MaxLength="128" />
+            </EntityType>
+            <EntityType Name="VacationCalculationType">
+                <Key>
+                    <PropertyRef Name="CONTRACT_TYPE" />
+                    <PropertyRef Name="StartDate" />
+                    <PropertyRef Name="EndDate" />
+                    <PropertyRef Name="JOB_CODE" />
+                    <PropertyRef Name="WORK_SCHEDULE" />
+                </Key>
+                <Property Name="CONTRACT_TYPE" Type="Edm.String" Nullable="false" MaxLength="128" />
+                <Property Name="StartDate" Type="Edm.DateTime" Nullable="false" />
+                <Property Name="EndDate" Type="Edm.DateTime" Nullable="false" />
+                <Property Name="JOB_CODE" Type="Edm.String" Nullable="false" MaxLength="30" />
+                <Property Name="WORK_SCHEDULE" Type="Edm.String" Nullable="false" MaxLength="20" />
+                <Property Name="BH_VACATION_EXCLUDE" Type="Edm.String" MaxLength="5" />
+                <Property Name="SUN_VACATION_EXCLUDE" Type="Edm.String" MaxLength="5" />
+                <Property Name="SAT_VACATION_EXCLUDE" Type="Edm.String" MaxLength="5" />
+                <Property Name="BH_DO_EXCLUDE" Type="Edm.String" MaxLength="5" />
+                <Property Name="SUN_DO_EXCLUDE" Type="Edm.String" MaxLength="5" />
+                <Property Name="SAT_DO_EXCLUDE" Type="Edm.String" MaxLength="5" />
+                <Property Name="VACATION_GAIN_PER_MONTH" Type="Edm.Decimal" Precision="10" Scale="5" />
+                <Property Name="CF" Type="Edm.Decimal" Precision="10" Scale="5" />
+                <Property Name="DO_GAIN" Type="Edm.Decimal" Precision="10" Scale="5" />
+                <Property Name="DO_GAIN_BH" Type="Edm.Decimal" Precision="7" Scale="5" />
+                <Property Name="DO_GAIN_SAT" Type="Edm.Decimal" Precision="10" Scale="5" />
+                <Property Name="DO_GAIN_SUN" Type="Edm.Decimal" Precision="10" Scale="5" />
+                <Property Name="GAIN_AGE_ABV_50" Type="Edm.Decimal" Precision="10" Scale="5" />
+                <Property Name="GAIN_AGE_ABV_55" Type="Edm.Decimal" Precision="10" Scale="5" />
+                <Property Name="GAIN_AGE_ABV_60" Type="Edm.Decimal" Precision="10" Scale="5" />
+                <Property Name="V_TAKEN_AMT" Type="Edm.Decimal" Precision="10" Scale="5" />
+                <Property Name="PRORATED" Type="Edm.String" MaxLength="5" />
+                <Property Name="FRI_VACATION_EXCLUDE" Type="Edm.String" MaxLength="5" />
+                <Property Name="FRI_DO_EXCLUDE" Type="Edm.String" MaxLength="5" />
+                <Property Name="DO_GAIN_FRI" Type="Edm.Decimal" Precision="10" Scale="5" />
+                <Property Name="PRORATED_EXCLUDE" Type="Edm.String" MaxLength="5" />
+                <Property Name="FLEX_TIME" Type="Edm.Decimal" DefaultValue="0" Precision="10" Scale="5" />
+                <Property Name="EMPLPYEE_ALLOWANCE" Type="Edm.Int64" />
+                <Property Name="SHIP_ALLOWANCE" Type="Edm.String" MaxLength="1000" />
+                <Property Name="HALFDAY_GAIN" Type="Edm.Decimal" DefaultValue="1" Precision="10" Scale="5" />
+                <Property Name="HALFDAY_DEDUCT" Type="Edm.Decimal" DefaultValue="1" Precision="10" Scale="5" />
+            </EntityType>
+            <EntityType Name="UserRemarksType">
+                <Key>
+                    <PropertyRef Name="SEQ_NO" />
+                </Key>
+                <Property Name="SEQ_NO" Type="Edm.Int32" Nullable="false" />
+                <Property Name="USER_ID" Type="Edm.String" MaxLength="100" />
+                <Property Name="CREATED_ON" Type="Edm.DateTime" />
+                <Property Name="REMARKS" Type="Edm.String" MaxLength="512" />
+                <Property Name="CREATED_BY" Type="Edm.String" MaxLength="128" />
+                <Property Name="CREATED_BY_NAME" Type="Edm.String" MaxLength="255" />
+            </EntityType>
+            <Association Name="ASS_LOG_HEAD_2_ITEMSType">
+                <End Type="viking.scheduling.tools.odata.AuditLogHeaderType" Role="AuditLogHeaderPrincipal" Multiplicity="0..1"/>
+                <End Type="viking.scheduling.tools.odata.AuditLogItemsType" Role="AuditLogItemsDependent" Multiplicity="1..*"/>
+            </Association>
+            <Association Name="navAuditReportItemsType">
+                <End Type="viking.scheduling.tools.odata.AuditReportHeaderType" Role="AuditReportHeaderPrincipal" Multiplicity="0..1"/>
+                <End Type="viking.scheduling.tools.odata.AuditReportItemsType" Role="AuditReportItemsDependent" Multiplicity="1..*"/>
+            </Association>
+            <EntityContainer Name="system" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="Manning" EntityType="viking.scheduling.tools.odata.ManningType" />
+                <EntitySet Name="UShips" EntityType="viking.scheduling.tools.odata.UShipsType" />
+                <EntitySet Name="UJobs" EntityType="viking.scheduling.tools.odata.UJobsType" />
+                <EntitySet Name="UShipJobs" EntityType="viking.scheduling.tools.odata.UShipJobsType" />
+                <EntitySet Name="UEmployeesold" EntityType="viking.scheduling.tools.odata.UEmployeesoldType" />
+                <EntitySet Name="UEmployeesebl" EntityType="viking.scheduling.tools.odata.UEmployeeseblType" />
+                <EntitySet Name="WorkScheduleStatus1" EntityType="viking.scheduling.tools.odata.WorkScheduleStatus1Type" />
+                <EntitySet Name="WorkScheduleStatus" EntityType="viking.scheduling.tools.odata.WorkScheduleStatusType" />
+                <EntitySet Name="UEmployees" EntityType="viking.scheduling.tools.odata.UEmployeesType" />
+                <EntitySet Name="ShipFilterRoleAssignment" EntityType="viking.scheduling.tools.odata.ShipFilterRoleAssignmentType" />
+                <EntitySet Name="BoardingandLodging" EntityType="viking.scheduling.tools.odata.BoardingandLodgingType" />
+                <EntitySet Name="EXTERNALTIMEDATA" EntityType="viking.scheduling.tools.odata.EXTERNALTIMEDATAType" />
+                <EntitySet Name="ShiftTiming" EntityType="viking.scheduling.tools.odata.ShiftTimingType" />
+                <EntitySet Name="WorkStatus" EntityType="viking.scheduling.tools.odata.WorkStatusType" />
+                <EntitySet Name="PlanningSchedule" EntityType="viking.scheduling.tools.odata.PlanningScheduleType" />
+                <EntitySet Name="TimeandAbsense" EntityType="viking.scheduling.tools.odata.TimeandAbsenseType" />
+                <EntitySet Name="RefInterface" EntityType="viking.scheduling.tools.odata.RefInterfaceType" />
+                <EntitySet Name="FunctionFilter" EntityType="viking.scheduling.tools.odata.FunctionFilterType" />
+                <EntitySet Name="User_permission" EntityType="viking.scheduling.tools.odata.User_permissionType" />
+                <EntitySet Name="AuditLogHeader" EntityType="viking.scheduling.tools.odata.AuditLogHeaderType" />
+                <EntitySet Name="AuditLogItems" EntityType="viking.scheduling.tools.odata.AuditLogItemsType" />
+                <EntitySet Name="VacationBalance" EntityType="viking.scheduling.tools.odata.VacationBalanceType" />
+                <EntitySet Name="BreakTimeType" EntityType="viking.scheduling.tools.odata.BreakTimeTypeType" />
+                <EntitySet Name="AuditReportHeader" EntityType="viking.scheduling.tools.odata.AuditReportHeaderType" />
+                <EntitySet Name="AuditReportItems" EntityType="viking.scheduling.tools.odata.AuditReportItemsType" />
+                <EntitySet Name="TimeEMPLOYEES" EntityType="viking.scheduling.tools.odata.TimeEMPLOYEESType" />
+                <EntitySet Name="Roleassignment" EntityType="viking.scheduling.tools.odata.RoleassignmentType" />
+                <EntitySet Name="TargetRoleDefination" EntityType="viking.scheduling.tools.odata.TargetRoleDefinationType" />
+                <EntitySet Name="Role_Matrix_view" EntityType="viking.scheduling.tools.odata.Role_Matrix_viewType" />
+                <EntitySet Name="Authority_Report" EntityType="viking.scheduling.tools.odata.Authority_ReportType" />
+                <EntitySet Name="TimeSheetReversal" EntityType="viking.scheduling.tools.odata.TimeSheetReversalType" />
+                <EntitySet Name="WORKDAYCOLSURE" EntityType="viking.scheduling.tools.odata.WORKDAYCOLSUREType" />
+                <EntitySet Name="companyMaster" EntityType="viking.scheduling.tools.odata.companyMasterType" />
+                <EntitySet Name="divisionMaster" EntityType="viking.scheduling.tools.odata.divisionMasterType" />
+                <EntitySet Name="operationsMaster" EntityType="viking.scheduling.tools.odata.operationsMasterType" />
+                <EntitySet Name="ShipMaster" EntityType="viking.scheduling.tools.odata.ShipMasterType" />
+                <EntitySet Name="ShipMasterNew" EntityType="viking.scheduling.tools.odata.ShipMasterNewType" />
+                <EntitySet Name="operationsMasterNew" EntityType="viking.scheduling.tools.odata.operationsMasterNewType" />
+                <EntitySet Name="User_permission_Data" EntityType="viking.scheduling.tools.odata.User_permission_DataType" />
+                <EntitySet Name="PublicHolidayConfig" EntityType="viking.scheduling.tools.odata.PublicHolidayConfigType" />
+                <EntitySet Name="VacationCalculation" EntityType="viking.scheduling.tools.odata.VacationCalculationType" />
+                <EntitySet Name="UserRemarks" EntityType="viking.scheduling.tools.odata.UserRemarksType" />
+                <AssociationSet Name="ASS_LOG_HEAD_2_ITEMS" Association="viking.scheduling.tools.odata.ASS_LOG_HEAD_2_ITEMSType">
+                    <End Role="AuditLogHeaderPrincipal" EntitySet="AuditLogHeader"/>
+                    <End Role="AuditLogItemsDependent" EntitySet="AuditLogItems"/>
+                </AssociationSet>
+                <AssociationSet Name="navAuditReportItems" Association="viking.scheduling.tools.odata.navAuditReportItemsType">
+                    <End Role="AuditReportHeaderPrincipal" EntitySet="AuditReportHeader"/>
+                    <End Role="AuditReportItemsDependent" EntitySet="AuditReportItems"/>
+                </AssociationSet>
+            </EntityContainer>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
