@@ -25,7 +25,7 @@ sap.ui.define([
 			var e = new sap.ui.model.json.JSONModel;
 			var t, that = this;
 			//e.loadData("/services/userapi/currentUser", null, false);
-			e.loadData(sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/userProfile", null, false);
+			e.loadData(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/userProfile", null, false);
 			sap.ui.getCore().setModel(e, "userapi");
 			
 			e.dataLoaded().then(function () {
@@ -63,11 +63,13 @@ sap.ui.define([
 					});
 				},*/
 		getRosterVH: function () {
-			this.sPath = sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment?cmd=handleRosterHeaderIdVH";
+			// this.sPath = sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/api/roster/rosterAssignment?cmd=handleRosterHeaderIdVH";
+			this.sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/roster/rosterAssignment/handleRosterHeaderIdVH";
 			var oJsonModel = new JSONModel();
-			oJsonModel.loadData(this.sPath, {}, true, "GET", false, true, {
-				"X-CSRF-Token": "Fetch"
-			});
+			// oJsonModel.loadData(this.sPath, {}, true, "GET", false, true, {
+			// 	"X-CSRF-Token": "Fetch"
+			// });
+			oJsonModel.loadData(this.sPath,null, false, "GET", false, false);
 
 			oJsonModel.attachRequestCompleted(function (jsonData, response) {
 				var oData = jsonData.getSource().getData();
@@ -166,9 +168,9 @@ sap.ui.define([
 			var that = this;
 			that.dp = this.dp;
 			BusyIndicator.show();
-			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment");
+			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
 			var oJsonModel = new sap.ui.model.json.JSONModel();
-			oJsonModel.loadData(sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment?cmd=fetchRosterAssignments", JSON.stringify(oPayload),
+			oJsonModel.loadData(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment?cmd=fetchRosterAssignments", JSON.stringify(oPayload),
 				true,
 				"POST", false, false, oHeader);
 			oJsonModel.attachRequestCompleted(null, function (jsonData) {
@@ -213,7 +215,7 @@ sap.ui.define([
 			this._valueHelpDialogCreate.close();
 		},
 		getRosterVHFragment: function () {
-			this.sPath = sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment?cmd=handleRosterHeaderIdVH";
+			this.sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment?cmd=handleRosterHeaderIdVH";
 			var oJsonModel = new JSONModel();
 			oJsonModel.loadData(this.sPath, {}, true, "GET", false, true, {
 				"X-CSRF-Token": "Fetch"
@@ -302,10 +304,10 @@ sap.ui.define([
 			var that = this;
 			that.dp = this.dp;
 			BusyIndicator.show();
-			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment");
+			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
 			var oJsonModel = new sap.ui.model.json.JSONModel();
 
-			var sPath = sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment?cmd=handlePostRosterAssignments";
+			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment?cmd=handlePostRosterAssignments";
 
 			oJsonModel.loadData(sPath, JSON.stringify(oPayload), true,
 				"POST", false, false, oHeader);
@@ -495,9 +497,9 @@ sap.ui.define([
 			var that = this;
 			that.dp = this.dp;
 			BusyIndicator.show();
-			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment");
+			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
 			var oJsonModel = new sap.ui.model.json.JSONModel();
-			var sPath = sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment?cmd=handleUpdateAssignmentStatus";
+			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvkt") + "/api/rosterAssignment?cmd=handleUpdateAssignmentStatus";
 
 			oJsonModel.loadData(sPath, JSON.stringify(oPayload), true,
 				"POST", false, false, oHeader);
@@ -581,9 +583,9 @@ sap.ui.define([
 			var that = this;
 			that.dp = this.dp;
 			BusyIndicator.show();
-			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment");
+			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
 			var oJsonModel = new sap.ui.model.json.JSONModel();
-			var sPath = sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment?cmd=handleDeleteRosterAssignments";
+			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment?cmd=handleDeleteRosterAssignments";
 
 			oJsonModel.loadData(sPath, JSON.stringify(oPayload), true,
 				"POST", false, false, oHeader);
@@ -842,12 +844,12 @@ sap.ui.define([
 			var that = this;
 			that.dp = this.dp;
 			BusyIndicator.show();
-			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment");
+			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
 			var oJsonModel = new sap.ui.model.json.JSONModel();
 
 			/*		var sPath = "";
 					if (this.action === 'Absence') {*/
-			var sPath = sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/Manning/api/rosterAssignment?cmd=handlePostRosterAssignments";
+			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment?cmd=handlePostRosterAssignments";
 			/*		} else if (this.action === 'Timesheet') {
 						sPath = "/Manning/viking/scheduling/tools/integration/AuditReport/TimesheetCorrection.xsjs";
 					}*/

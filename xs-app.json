@@ -3,9 +3,9 @@
     "authenticationMethod": "route",
     "routes": [
       {
-        "source": "^/Manning/(.*)$",
-        "target": "$1",
-        "destination": "DEST_WFMSCH",
+        "source": "^/api/(.*)$",
+        "target": "/api/$1",
+        "destination": "DEST_VPP_LICENSE",
         "authenticationType": "xsuaa",
         "csrfProtection": false
       },
