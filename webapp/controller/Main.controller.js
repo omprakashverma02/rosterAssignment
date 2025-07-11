@@ -12,34 +12,36 @@ sap.ui.define([
 	"sap/ui/export/Spreadsheet",
 	"sap/ui/export/library",
 	"sap/m/List",
-	"sap/m/StandardListItem"
+	"sap/m/StandardListItem",
+	"../util/service"
 ], function (Controller, BusyIndicator, JSONModel, MessageToast, MessageBox, Dialog, mlibrary, Button, Text, formatter, Spreadsheet,
-	exportLibrary, List, StandardListItem) {
+	exportLibrary, List, StandardListItem, ServiceHandler) {
 	"use strict";
 	var ButtonType = mlibrary.ButtonType;
 	var DialogType = mlibrary.DialogType;
 	var EdmType = exportLibrary.EdmType;
 	return Controller.extend("rosterassignmentvk.rosterassignmentvk.controller.Main", {
 		formatter: formatter,
+
 		onInit: function () {
 			var e = new sap.ui.model.json.JSONModel;
 			var t, that = this;
 			//e.loadData("/services/userapi/currentUser", null, false);
-			e.loadData(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/userProfile", null, false);
+			e.loadData(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/currentUser", null, false);
 			sap.ui.getCore().setModel(e, "userapi");
-			
 			e.dataLoaded().then(function () {
-				t = sap.ui.getCore().getModel("userapi").getData().data[0].userDetail[0].USERID;								
-				this.setLocation(sap.ui.getCore().getModel("userapi").getData().data[5].locations);
+				// t = sap.ui.getCore().getModel("userapi").getData().data[0].userDetail[0].USERID;
+				t = sap.ui.getCore().getModel("userapi").getData().pUserId;
+				// this.setLocation(sap.ui.getCore().getModel("userapi").getData().data[5].locations);
 			}.bind(this));
 			//	this.getCurrentUser();
 			this.getRosterVH();
 		},
-		setLocation : function(odata){
-			var olocModel = new sap.ui.model.json.JSONModel();			
+		setLocation: function (odata) {
+			var olocModel = new sap.ui.model.json.JSONModel();
 			olocModel.setData(odata);
 			this.getOwnerComponent().setModel(olocModel, "shipList");
-			
+
 		},
 		/*		getCurrentUser: function () {
 					var userModel = new sap.ui.model.json.JSONModel(),
@@ -62,50 +64,38 @@ sap.ui.define([
 						sap.ui.getCore().getModel("userapi").setProperty("/Email", email);
 					});
 				},*/
-		getRosterVH: function () {
-			// this.sPath = sap.ui.require.toUrl("rosterassignment/rosterassignment") + "/api/roster/rosterAssignment?cmd=handleRosterHeaderIdVH";
+
+		getRosterVH: async function () {
 			this.sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/roster/rosterAssignment/handleRosterHeaderIdVH";
-			var oJsonModel = new JSONModel();
-			// oJsonModel.loadData(this.sPath, {}, true, "GET", false, true, {
-			// 	"X-CSRF-Token": "Fetch"
-			// });
-			oJsonModel.loadData(this.sPath,null, false, "GET", false, false);
-
-			oJsonModel.attachRequestCompleted(function (jsonData, response) {
-				var oData = jsonData.getSource().getData();
-				if (oData.data.status) {
-					var oModel = new sap.ui.model.json.JSONModel(jsonData.getSource().getData().data.RosterDetail);
-					this.getView().byId("rosterFilter").setModel(oModel, "RosterData");
-
-				} else {
-					sap.M.MessageBox.error("Data loading failed..!!");
-				}
-			}.bind(this));
+			var response = await ServiceHandler.get(this.sPath)
+			if (response.status) {
+				var oModel = new sap.ui.model.json.JSONModel(response.RosterDetail);
+				this.getView().byId("rosterFilter").setModel(oModel, "RosterData");
+			} else {
+				MessageBox.error("Data loading failed..!!");
+			}
 		},
 
 		onReset: function () {
 			/*this.getView().byId("rosterFilter").setSelectedKeys('');
 			this.getView().byId("PlanningShipsFilter").setSelectedKeys('');
 			this.getView().byId("idStartDate").setValue('');*/
-
 			this.getView().byId("rosterFilter").removeAllSelectedItems();
 			this.getView().byId("PlanningShipsFilter").removeAllSelectedItems();
 			this.getView().byId("idStartDate").setValue('');
 		},
-		onSearch: function () {
 
+		onSearch: function () {
 			var oTableUIData = this.getView().getModel("local").getProperty("/");
 			var aRosterSelected = (oTableUIData.oSelectedRoster) ? oTableUIData.oSelectedRoster : [];
 			var aShipSelected = (oTableUIData.oSelectedShip) ? oTableUIData.oSelectedShip : [];
 			var oFromDate = this._convertToUTC(oTableUIData.oStartDate);
 			var oEndDate = oTableUIData.oEndDate;
-
 			var dates = this.getView().byId("idStartDate").getValue()
 			if (dates) {
 				var oStartFrom = dates.split('-')[0].replace(/\s/g, '').replace('/', '.').replace('/', '.');
 				var oStartTo = dates.split('-')[1].replace(/\s/g, '').replace('/', '.').replace('/', '.');
 			}
-
 			if (oStartFrom === undefined) {
 				oStartFrom = '';
 			} else {
@@ -116,7 +106,6 @@ sap.ui.define([
 			} else {
 				oStartTo = oStartTo;
 			}
-
 			/*		var datesTo = this.getView().byId("idEndDate").getValue()
 					if (datesTo) {
 						var oEndFrom = datesTo.split('-')[0].replace(/\s/g, '').replace('/','.').replace('/','.');
@@ -133,25 +122,22 @@ sap.ui.define([
 					} else {
 						oEndTo = oEndTo;
 					}*/
-
 			var Payload = {
 				"ROSTER_CODE": aRosterSelected,
 				"SHIP_CODE": aShipSelected,
 				"START_DATE_FROM": oStartFrom,
 				"START_DATE_TO": oStartTo
-					/*	"END_DATE_FROM": oEndFrom,
-						"END_DATE_TO": oEndTo*/
-					// aShipSelected
-					/*				"endDate": oEndDate,
-									"locationId": aShipSelected,
-									"jobTitles": aJobSelected,
-									"function": aDivSelected,
-									"userId": aEmpSelected,
-									"countryOfCompany": aCountrySelected*/
+				/*	"END_DATE_FROM": oEndFrom,
+					"END_DATE_TO": oEndTo*/
+				// aShipSelected
+				/*				"endDate": oEndDate,
+								"locationId": aShipSelected,
+								"jobTitles": aJobSelected,
+								"function": aDivSelected,
+								"userId": aEmpSelected,
+								"countryOfCompany": aCountrySelected*/
 			};
-
 			this.getRosterAssignmentData(Payload);
-
 		},
 
 		_convertToUTC: function (o) {
@@ -164,7 +150,6 @@ sap.ui.define([
 		},
 
 		getRosterAssignmentData: function (oPayload) {
-
 			var that = this;
 			that.dp = this.dp;
 			BusyIndicator.show();
@@ -294,7 +279,7 @@ sap.ui.define([
 				"IS_DELETED": 'N',
 				"MODIFIED_ON": this.formatDateAsString(new Date(), "yyyy-MM-ddThh:MM:ss"),
 				"MODIFIED_BY": this._getCurrentUser().name
-					//	"MODIFIED_BY": sap.ui.getCore().getModel("userapi").getProperty("/Email")
+				//	"MODIFIED_BY": sap.ui.getCore().getModel("userapi").getProperty("/Email")
 			}];
 
 			this.createRecords(requestData);
@@ -404,21 +389,21 @@ sap.ui.define([
 				var hh, mins, secs;
 
 				switch (format) {
-				case "yyyy-MM-ddThh:MM:ss":
-					hh = dateValue.getHours() + "";
-					hh = (hh.length > 1) ? hh : "0" + hh;
-					mins = dateValue.getMinutes() + "";
-					mins = (mins.length > 1) ? mins : "0" + mins;
-					secs = dateValue.getSeconds() + "";
-					secs = (secs.length > 1) ? secs : "0" + secs;
-					response = yyyy + "-" + mm + "-" + dd + "T" + hh + ":" + mins + ":" + secs;
-					break;
-				case "yyyy-MM-dd":
-					response = yyyy + "-" + mm + "-" + dd;
-					break;
-				default:
-					response = dateValue;
-					break;
+					case "yyyy-MM-ddThh:MM:ss":
+						hh = dateValue.getHours() + "";
+						hh = (hh.length > 1) ? hh : "0" + hh;
+						mins = dateValue.getMinutes() + "";
+						mins = (mins.length > 1) ? mins : "0" + mins;
+						secs = dateValue.getSeconds() + "";
+						secs = (secs.length > 1) ? secs : "0" + secs;
+						response = yyyy + "-" + mm + "-" + dd + "T" + hh + ":" + mins + ":" + secs;
+						break;
+					case "yyyy-MM-dd":
+						response = yyyy + "-" + mm + "-" + dd;
+						break;
+					default:
+						response = dateValue;
+						break;
 				}
 			}
 			return response;
@@ -484,7 +469,7 @@ sap.ui.define([
 						"END_DATE": this.formatdatePost(keys[i].mAggregations.cells[5].getText()),
 						"MODIFIED_ON": this.formatDateAsString(new Date(), "yyyy-MM-ddThh:MM:ss"),
 						"MODIFIED_BY": this._getCurrentUser().name
-							//	"MODIFIED_BY": sap.ui.getCore().getModel("userapi").getProperty("/Email")
+						//	"MODIFIED_BY": sap.ui.getCore().getModel("userapi").getProperty("/Email")
 					};
 					requestData.push(obj);
 				}
@@ -562,7 +547,7 @@ sap.ui.define([
 					"END_DATE": this.formatdatePost(keys[i].mAggregations.cells[5].getText()),
 					"MODIFIED_ON": this.formatDateAsString(new Date(), "yyyy-MM-ddThh:MM:ss"),
 					"MODIFIED_BY": this._getCurrentUser().name
-						//	"MODIFIED_BY": sap.ui.getCore().getModel("userapi").getProperty("/Email")
+					//	"MODIFIED_BY": sap.ui.getCore().getModel("userapi").getProperty("/Email")
 				};
 				requestData.push(obj);
 			}
@@ -693,22 +678,22 @@ sap.ui.define([
 							for (var j = 0; j < rowData.length; j++) {
 								//	obj[columnNames[j]] = rowData[j];
 								switch (j) {
-								case 0:
-									obj.ROSTER_NAME = rowData[j];
-									break;
-								case 1:
-									obj.ROSTER_CODE = rowData[j];
-									break;
-								case 2:
-									obj.SHIP_CODE = rowData[j];
-									break;
+									case 0:
+										obj.ROSTER_NAME = rowData[j];
+										break;
+									case 1:
+										obj.ROSTER_CODE = rowData[j];
+										break;
+									case 2:
+										obj.SHIP_CODE = rowData[j];
+										break;
 
-								case 3:
-									obj.START_DATE = rowData[j];
-									break;
-								case 4:
-									obj.END_DATE = rowData[j];
-									break;
+									case 3:
+										obj.START_DATE = rowData[j];
+										break;
+									case 4:
+										obj.END_DATE = rowData[j];
+										break;
 								}
 
 							}
@@ -755,7 +740,7 @@ sap.ui.define([
 							"IS_DELETED": 'N',
 							"MODIFIED_ON": that.formatDateAsString(new Date(), "yyyy-MM-ddThh:MM:ss"),
 							"MODIFIED_BY": that._getCurrentUser().name
-								//	"MODIFIED_BY": sap.ui.getCore().getModel("userapi").getProperty("/Email")
+							//	"MODIFIED_BY": sap.ui.getCore().getModel("userapi").getProperty("/Email")
 						};
 
 						/*	var aData = {
@@ -770,7 +755,7 @@ sap.ui.define([
 					}
 
 					if (item.length > 0) {
-							that.createMassRosterAssignments(item);
+						that.createMassRosterAssignments(item);
 					}
 				}
 
