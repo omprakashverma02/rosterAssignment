@@ -3,9 +3,7 @@
 	<Dialog id="idFragCreateRosterAssignment" title="Create Roster Assignment" contentWidth="600px" contentHeight="400px" showHeader="false">
 		<NavContainer id="ADispcpaGrp">
 			<Page title="Create Roster Assignment" showNavButton="false">
-				<!--<headerContent>
-					<Button icon="sap-icon://sys-cancel" press="handleFgRosterAssignmentClose"></Button>
-				</headerContent>-->
+				
 				<l:Grid defaultSpan="L12 M12 S12">
 					<l:content>
 						<f:SimpleForm minWidth="1024" maxContainerCols="2" editable="true" layout="ResponsiveGridLayout" labelSpanL="4" labelSpanM="4"
@@ -20,8 +18,8 @@
 									<core:ListItem key="{RosterData>ROSTER_CODE}" text="{RosterData>ROSTER_NAME}" additionalText="{RosterData>ROSTER_NAME}"/>
 								</ComboBox>
 								<Label text="Choose Ship" required="true"/>
-								<ComboBox id="idFragChooseShip" showSecondaryValues="true" items="{ path: 'shipList>/', sorter: { path: 'LOCID' } }" width="100%" placeholder="{i18n>shipFilterTooltip}">
-									<core:ListItem key="{shipList>LOCID}" text="{shipList>LOCID}" additionalText="{shipList>LOCDESC}"/>
+								<ComboBox id="idFragChooseShip" showSecondaryValues="true" items="{ path: 'shipList>/', sorter: { path: 'LOCATION_ID' } }" width="100%" placeholder="{i18n>shipFilterTooltip}">
+									<core:ListItem key="{shipList>LOCATION_ID}" text="{shipList>LOCATION_ID}" additionalText="{shipList>OFFICE_OR_SHIP_DESC}"/>
 								</ComboBox>
 								<!--<Input id="idFragChooseShip" width="100%"/>-->
 								<!--		<ComboBox id="idFragChooseShip" showSecondaryValues="true" id="PlanningShipsFilter" items="{ path: '/ShipMaster', sorter: { path: 'shipId' } }" 

@@ -21,9 +21,9 @@
 								<fb:FilterGroupItem groupName="__$INTERNAL$" name="B" label="{i18n>shipFilterLbl}" labelTooltip="{i18n>shipFilterTooltip}"
 									partOfCurrentVariant="true" visibleInFilterBar="true">
 									<fb:control>
-										<MultiComboBox showSecondaryValues="true" items="{ path: 'shipList>/', sorter: { path: 'LOCID' }}" width="20rem"
+										<MultiComboBox showSecondaryValues="true" items="{ path: 'shipList>/', sorter: { path: 'LOCATION_ID' }}" width="20rem"
 											placeholder="{i18n>shipFilterTooltip}" selectedKeys="{path:'local>/oSelectedShip'}">
-											<core:ListItem key="{shipList>LOCID}" text="{shipList>LOCID}" additionalText="{shipList>LOCDESC}"/>
+											<core:ListItem key="{shipList>LOCATION_ID}" text="{shipList>LOCATION_ID}" additionalText="{shipList>OFFICE_OR_SHIP_DESC}"/>
 										</MultiComboBox>										
 									</fb:control>
 								</fb:FilterGroupItem>
@@ -79,7 +79,7 @@
 							</fb:filterGroupItems>
 						</fb:FilterBar>
 						<Table id="rosterAssignmentDataTbl" items="{rosterAssignmentData>/}" mode="MultiSelect" growing="true" growingThreshold="1000"
-							growingScrollToLoad="true">
+							growingScrollToLoad="true" >
 							<headerToolbar>
 								<OverflowToolbar>
 									<Title text="Roster Assignments" level="H2"/>

@@ -24,18 +24,36 @@ sap.ui.define([
 		formatter: formatter,
 
 		onInit: function () {
+			// LOCAL MODEL
+			var oLocalModel = new sap.ui.model.json.JSONModel({
+				oSelectedRoster: [],
+				oSelectedShip: [],
+				oStartDate: "",
+				oEndDate: ""
+			});
+
+			// attach to the Component (so you can use getOwnerComponent().getModel("local"))
+			this.getOwnerComponent().setModel(oLocalModel, "local");
+
+			// ROSTER ASSIGNMENT MODEL
+			var oDataModel = new sap.ui.model.json.JSONModel([]);
+			this.getView().setModel(oDataModel, "rosterAssignmentData");
+
+
+
+
+
+
+
 			var e = new sap.ui.model.json.JSONModel;
 			var t, that = this;
-			//e.loadData("/services/userapi/currentUser", null, false);
 			e.loadData(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/currentUser", null, false);
 			sap.ui.getCore().setModel(e, "userapi");
 			e.dataLoaded().then(function () {
-				// t = sap.ui.getCore().getModel("userapi").getData().data[0].userDetail[0].USERID;
 				t = sap.ui.getCore().getModel("userapi").getData().pUserId;
-				// this.setLocation(sap.ui.getCore().getModel("userapi").getData().data[5].locations);
 			}.bind(this));
-			//	this.getCurrentUser();
 			this.getRosterVH();
+			this.getShipVH()
 		},
 		setLocation: function (odata) {
 			var olocModel = new sap.ui.model.json.JSONModel();
@@ -43,27 +61,6 @@ sap.ui.define([
 			this.getOwnerComponent().setModel(olocModel, "shipList");
 
 		},
-		/*		getCurrentUser: function () {
-					var userModel = new sap.ui.model.json.JSONModel(),
-						sUserID, that = this;
-					userModel.loadData("/services/userapi/currentUser", null, false);
-					sap.ui.getCore().setModel(userModel, "userapi");
-					userModel.dataLoaded().then(function () {
-						sUserID = sap.ui.getCore().getModel("userapi").getData().name;
-						that._getUserDetails(sUserID);
-					});
-				},
-				// fetch user details
-				_getUserDetails: function (sUserID) {
-					var oJsonModel = new sap.ui.model.json.JSONModel();
-					oJsonModel.loadData("/IASUserScim/" + sUserID, null, false);
-					sap.ui.getCore().setModel(oJsonModel, "userIAS");
-					oJsonModel.dataLoaded().then(function (oData) {
-						sap.ui.getCore().getModel("userapi").setProperty("/pID", sap.ui.getCore().getModel("userIAS").getProperty("/id"));
-						var email = sap.ui.getCore().getModel("userIAS").getData().emails[0].value;
-						sap.ui.getCore().getModel("userapi").setProperty("/Email", email);
-					});
-				},*/
 
 		getRosterVH: async function () {
 			this.sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/roster/rosterAssignment/handleRosterHeaderIdVH";
@@ -76,17 +73,33 @@ sap.ui.define([
 			}
 		},
 
+		getShipVH: async function () {
+			try {
+				this.sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/vpp/distShips";
+				var response = await ServiceHandler.get(this.sPath);
+
+				if (response && response.status) {
+					var aShips = response.data.results || response.data || [];
+					var oModel = new sap.ui.model.json.JSONModel(aShips);
+					this.getView().setModel(oModel, "shipList");
+				} else {
+					MessageBox.error("Data loading failed..!!");
+				}
+			} catch (err) {
+				console.error("getShipVH error:", err);
+				MessageBox.error("Unexpected error occurred while loading ships");
+			}
+		},
+
 		onReset: function () {
-			/*this.getView().byId("rosterFilter").setSelectedKeys('');
-			this.getView().byId("PlanningShipsFilter").setSelectedKeys('');
-			this.getView().byId("idStartDate").setValue('');*/
+
 			this.getView().byId("rosterFilter").removeAllSelectedItems();
 			this.getView().byId("PlanningShipsFilter").removeAllSelectedItems();
 			this.getView().byId("idStartDate").setValue('');
 		},
 
 		onSearch: function () {
-			var oTableUIData = this.getView().getModel("local").getProperty("/");
+			var oTableUIData = this.getOwnerComponent().getModel("local").getProperty("/") || {};
 			var aRosterSelected = (oTableUIData.oSelectedRoster) ? oTableUIData.oSelectedRoster : [];
 			var aShipSelected = (oTableUIData.oSelectedShip) ? oTableUIData.oSelectedShip : [];
 			var oFromDate = this._convertToUTC(oTableUIData.oStartDate);
@@ -106,36 +119,13 @@ sap.ui.define([
 			} else {
 				oStartTo = oStartTo;
 			}
-			/*		var datesTo = this.getView().byId("idEndDate").getValue()
-					if (datesTo) {
-						var oEndFrom = datesTo.split('-')[0].replace(/\s/g, '').replace('/','.').replace('/','.');
-						var oEndTo = datesTo.split('-')[1].replace(/\s/g, '').replace('/','.').replace('/','.');
-					}
-	
-					if (oEndFrom === undefined) {
-						oEndFrom = '';
-					} else {
-						oEndFrom = oEndFrom;
-					}
-					if (oEndTo === undefined) {
-						oEndTo = '';
-					} else {
-						oEndTo = oEndTo;
-					}*/
+
 			var Payload = {
 				"ROSTER_CODE": aRosterSelected,
 				"SHIP_CODE": aShipSelected,
 				"START_DATE_FROM": oStartFrom,
 				"START_DATE_TO": oStartTo
-				/*	"END_DATE_FROM": oEndFrom,
-					"END_DATE_TO": oEndTo*/
-				// aShipSelected
-				/*				"endDate": oEndDate,
-								"locationId": aShipSelected,
-								"jobTitles": aJobSelected,
-								"function": aDivSelected,
-								"userId": aEmpSelected,
-								"countryOfCompany": aCountrySelected*/
+
 			};
 			this.getRosterAssignmentData(Payload);
 		},
@@ -151,32 +141,37 @@ sap.ui.define([
 
 		getRosterAssignmentData: function (oPayload) {
 			var that = this;
-			that.dp = this.dp;
-			BusyIndicator.show();
-			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
-			var oJsonModel = new sap.ui.model.json.JSONModel();
-			oJsonModel.loadData(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment?cmd=fetchRosterAssignments", JSON.stringify(oPayload),
-				true,
-				"POST", false, false, oHeader);
-			oJsonModel.attachRequestCompleted(null, function (jsonData) {
-				BusyIndicator.hide();
-				if (oJsonModel.getData().data.status === "SUCCESS") {
-					//	that.getView().getModel("local").setProperty("/range", true);
-					//console.log(oJsonModel.getData());
+			BusyIndicator.show(1);
 
+			var sUrl = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/roster/rosterAssignment/fetchRosterAssignments";
+
+			var oJsonModel = new sap.ui.model.json.JSONModel();
+
+			oJsonModel.loadData(
+				sUrl,
+				JSON.stringify(oPayload),
+				true,   // async
+				"POST", // method
+				false,  // cache
+				false,   // merge
+				{ "Content-Type": "application/json" }
+			)
+			oJsonModel.attachRequestCompleted(function () {
+				BusyIndicator.hide();
+
+				var oResponse = oJsonModel.getData();
+				if (oResponse && oResponse.status === 200 && oResponse.message === "SUCCESS") {
 					var oDataModel = that.getView().getModel("rosterAssignmentData");
-					oDataModel.setData(oJsonModel.getData().data.results);
+					oDataModel.setData(oResponse.results || []);
 					that.getView().byId("rosterAssignmentDataTbl").removeSelections();
-					/*	that.dp.startDate = that.summaryStart;
-						that.dp.days = DayPilot.DateUtil.daysDiff(that.summaryStart.value, that.summaryEnd.value);
-						that.dp.resources = oJsonModel.getData().results1;
-						that.dp.events.list = oJsonModel.getData().results2;
-						that.dp.visible = true;
-						that.dp.update();*/
 				} else {
 					MessageToast.show("No Data");
-					BusyIndicator.hide();
 				}
+			});
+
+			oJsonModel.attachRequestFailed(function () {
+				BusyIndicator.hide();
+				MessageToast.show("Error fetching roster assignments");
 			});
 		},
 
@@ -187,7 +182,7 @@ sap.ui.define([
 			// create value help dialog
 			if (!this._valueHelpDialogCreate) {
 				this._valueHelpDialogCreate = sap.ui.xmlfragment(this.createId("idUniqueFragRosterAssignment"),
-					"rosterassignment.rosterassignment.view.fragment.createRosterAssignment",
+					"rosterassignmentvk.rosterassignmentvk.view.fragment.createRosterAssignment",
 					this
 				);
 				this.getView().addDependent(this._valueHelpDialogCreate);
@@ -199,25 +194,38 @@ sap.ui.define([
 		handleFgRosterAssignmentClose: function () {
 			this._valueHelpDialogCreate.close();
 		},
+
 		getRosterVHFragment: function () {
-			this.sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment?cmd=handleRosterHeaderIdVH";
-			var oJsonModel = new JSONModel();
+			this.sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") +
+				"/api/roster/rosterAssignment/handleRosterHeaderIdVH";
+
+			var oJsonModel = new sap.ui.model.json.JSONModel();
 			oJsonModel.loadData(this.sPath, {}, true, "GET", false, true, {
 				"X-CSRF-Token": "Fetch"
 			});
 
 			oJsonModel.attachRequestCompleted(function (jsonData, response) {
 				var oData = jsonData.getSource().getData();
-				if (oData.data.status) {
-					var oModel = new sap.ui.model.json.JSONModel(jsonData.getSource().getData().data.RosterDetail);
-					sap.ui.core.Fragment.byId(this.createId("idUniqueFragRosterAssignment"), "idFragChooseRosterCode").setModel(oModel,
-						"RosterData");
+
+				if (oData && oData.status === 200) {
+					var oModel = new sap.ui.model.json.JSONModel(oData.RosterDetail);
+					sap.ui.core.Fragment.byId(
+						this.createId("idUniqueFragRosterAssignment"),
+						"idFragChooseRosterCode"
+					).setModel(oModel, "RosterData");
 
 				} else {
-					sap.M.MessageBox.error("Data loading failed..!!");
+					// Show backend message if available, else default error
+					var sErrorMsg = (oData && oData.message) ? oData.message : "Data loading failed..!!";
+					sap.m.MessageBox.error(sErrorMsg);
 				}
 			}.bind(this));
+
+			oJsonModel.attachRequestFailed(function () {
+				sap.m.MessageBox.error("Service call failed. Please try again.");
+			});
 		},
+
 		handleFgRosterAssignmentClear: function () {
 			var oCore = sap.ui.getCore();
 			//	sap.ui.core.Fragment.byId(this.createId("idUniqueFragRosterAssignment"), "idFragChooseRosterName").setValue("");
@@ -226,6 +234,7 @@ sap.ui.define([
 			sap.ui.core.Fragment.byId(this.createId("idUniqueFragRosterAssignment"), "idFragStartDate").setValue("");
 			sap.ui.core.Fragment.byId(this.createId("idUniqueFragRosterAssignment"), "idFragEndDate").setValue("");
 		},
+
 		handleFgRosterAssignmentSave: function (oEvent) {
 			var oCore = sap.ui.getCore();
 			//	var rosterName = sap.ui.core.Fragment.byId(this.createId("idUniqueFragRosterAssignment"), "idFragChooseRosterName").getValue();
@@ -285,31 +294,48 @@ sap.ui.define([
 			this.createRecords(requestData);
 
 		},
+
+
 		createRecords: function (oPayload) {
 			var that = this;
-			that.dp = this.dp;
-			BusyIndicator.show();
-			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
+			BusyIndicator.show(5);
+
+			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") +
+				"/api/roster/rosterAssignment/handlePostRosterAssignments";
+
 			var oJsonModel = new sap.ui.model.json.JSONModel();
 
-			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment?cmd=handlePostRosterAssignments";
+			oJsonModel.loadData(
+				sPath,
+				JSON.stringify(oPayload),
+				true,   // async
+				"POST", // method
+				false,  // cache
+				false,   // merge
+				{ "Content-Type": "application/json" }
+			);
 
-			oJsonModel.loadData(sPath, JSON.stringify(oPayload), true,
-				"POST", false, false, oHeader);
-			oJsonModel.attachRequestCompleted(null, function (jsonData) {
+			oJsonModel.attachRequestCompleted(function () {
 				BusyIndicator.hide();
-				if (oJsonModel.getData().data.status === 'SUCCESS') {
-					//	that.getView().getModel("local").setProperty("/range", true);
-					//	console.log(oJsonModel.getData());
-					that.handleFgRosterAssignmentClear();
 
+				var oResponse = oJsonModel.getData();
+
+				if (oResponse.status === 201) {
+					that.handleFgRosterAssignmentClear();
 					MessageToast.show("Successfully Updated");
 					that.handleFgRosterAssignmentClose();
 					that.onSearch();
 				} else {
-					MessageToast.show(oJsonModel.getData().data.results[0].Message);
-					BusyIndicator.hide();
+					var sMsg = (oResponse && oResponse.data && oResponse.data.results && oResponse.data.results[0])
+						? oResponse.data.results[0].Message
+						: "Update failed!";
+					MessageToast.show(sMsg);
 				}
+			});
+
+			oJsonModel.attachRequestFailed(function () {
+				BusyIndicator.hide();
+				MessageToast.show("Service call failed. Please try again.");
 			});
 		},
 
@@ -409,19 +435,21 @@ sap.ui.define([
 			return response;
 		},
 
-		//fetch current user details
 		_getCurrentUser: function () {
 			var oCurrData = sap.ui.getCore().getModel("userapi").getData();
-			// var sUserID = sap.ui.getCore().getModel("userapi").getProperty("/empNum");
-			// oCurrData.name = (sUserID) ? sUserID : oCurrData.name;
-			var sUserID = sap.ui.getCore().getModel("userapi").getData().data[0].userDetail[0].USERID;
-			oCurrData.name = (sUserID) ? sUserID : oCurrData.data[0].userDetail[0].FIRSTNAME;
-			if (!oCurrData.name) {
+
+			// Prefer pUserId, fallback to fullName, then default
+			var sUserID = oCurrData.pUserId || oCurrData.fullName;
+
+			if (sUserID) {
+				oCurrData.name = sUserID;
+			} else {
 				oCurrData = {
 					name: "Default_User",
 					displayName: "Default_User"
 				};
 			}
+
 			return oCurrData;
 		},
 
@@ -436,7 +464,7 @@ sap.ui.define([
 				//	// create value help dialog
 				if (!this._valueHelpDialogChangeAssiStatus) {
 					this._valueHelpDialogChangeAssiStatus = sap.ui.xmlfragment(this.createId("idUniqueFragChangeAssiStatus"),
-						"rosterassignment.rosterassignment.view.fragment.changeAssignmentStatus",
+						"rosterassignmentvk.rosterassignmentvk.view.fragment.changeAssignmentStatus",
 						this
 					);
 					this.getView().addDependent(this._valueHelpDialogChangeAssiStatus);
@@ -480,27 +508,37 @@ sap.ui.define([
 
 		saveAssignmentStatus: function (oPayload) {
 			var that = this;
-			that.dp = this.dp;
-			BusyIndicator.show();
-			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
-			var oJsonModel = new sap.ui.model.json.JSONModel();
-			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvkt") + "/api/rosterAssignment?cmd=handleUpdateAssignmentStatus";
+			BusyIndicator.show(2);
 
-			oJsonModel.loadData(sPath, JSON.stringify(oPayload), true,
-				"POST", false, false, oHeader);
-			oJsonModel.attachRequestCompleted(null, function (jsonData) {
+			var oJsonModel = new sap.ui.model.json.JSONModel();
+			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") +
+				"/api/roster/rosterAssignment/handleUpdateAssignmentStatus";
+
+			// Add Content-Type so backend parses JSON
+			oJsonModel.loadData(
+				sPath,
+				JSON.stringify(oPayload),
+				true,        // async
+				"PUT",       // method
+				false,       // cache
+				false,       // crossDomain
+				{ "Content-Type": "application/json" }
+			);
+
+			oJsonModel.attachRequestCompleted(null, function () {
 				BusyIndicator.hide();
-				if (oJsonModel.getData().data.status === 'SUCCESS') {
-					MessageToast.show("Assignment Status Changed Successfully");
+
+				var oResponse = oJsonModel.getData();
+				if (oResponse && oResponse.status === 200) {
+					MessageToast.show(oResponse.message || "Assignment Status Changed Successfully");
 					that.handleFgAssignmentStatusClose();
 					that.onSearch();
 				} else {
 					MessageToast.show("Not able to change the Assignment Status");
-					BusyIndicator.hide();
 				}
 			});
-
 		},
+
 		onDeleteRosterAssignment: function (oEvent) {
 			var keys = this.getView().byId("rosterAssignmentDataTbl").getSelectedItems();
 			if (keys.length === 0) {
@@ -547,14 +585,9 @@ sap.ui.define([
 					"END_DATE": this.formatdatePost(keys[i].mAggregations.cells[5].getText()),
 					"MODIFIED_ON": this.formatDateAsString(new Date(), "yyyy-MM-ddThh:MM:ss"),
 					"MODIFIED_BY": this._getCurrentUser().name
-					//	"MODIFIED_BY": sap.ui.getCore().getModel("userapi").getProperty("/Email")
 				};
 				requestData.push(obj);
 			}
-			/*	var requestData = {
-					"reqPayload": item
-				};*/
-
 			this.deleteRecords(requestData);
 		},
 
@@ -566,26 +599,42 @@ sap.ui.define([
 
 		deleteRecords: function (oPayload) {
 			var that = this;
-			that.dp = this.dp;
-			BusyIndicator.show();
-			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
-			var oJsonModel = new sap.ui.model.json.JSONModel();
-			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment?cmd=handleDeleteRosterAssignments";
+			BusyIndicator.show(2);
 
-			oJsonModel.loadData(sPath, JSON.stringify(oPayload), true,
-				"POST", false, false, oHeader);
-			oJsonModel.attachRequestCompleted(null, function (jsonData) {
+			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") +
+				"/api/roster/rosterAssignment/handleDeleteRosterAssignments";
+
+			var oJsonModel = new sap.ui.model.json.JSONModel();
+
+			oJsonModel.loadData(
+				sPath,
+				JSON.stringify(oPayload),   // request body
+				true,                       // async
+				"PUT",                      // method
+				false,                      // cache
+				false,                      // crossDomain
+				{ "Content-Type": "application/json" }  // 🔹 ensure backend parses JSON
+			);
+
+			oJsonModel.attachRequestCompleted(function () {
 				BusyIndicator.hide();
-				if (oJsonModel.getData().data.status === 'SUCCESS') {
-					MessageToast.show("Assignment deleted successfully");
-					that.onSearch();
+
+				var oResponse = oJsonModel.getData();
+				if (oResponse && oResponse.status === 200) {
+					MessageToast.show(oResponse.message || "Assignment deleted successfully");
+					that.onSearch(); // refresh the table after delete
 				} else {
 					MessageToast.show("Not able to delete the records.");
-					BusyIndicator.hide();
 				}
 			});
 
+			oJsonModel.attachRequestFailed(function (oError) {
+				BusyIndicator.hide();
+				MessageToast.show("Error deleting the records. Check console.");
+				console.error("Delete failed:", oError);
+			});
 		},
+
 
 		onDownloadRosterAssignmentTemplate: function () {
 
@@ -649,6 +698,7 @@ sap.ui.define([
 				property: ""
 			}];
 		},
+
 		onUploadMassRosterAssignment: function (oEvent) {
 			this.importFile(oEvent.getParameter("files") && oEvent.getParameter("files")[0]);
 		},
@@ -824,40 +874,84 @@ sap.ui.define([
 			this.createBulkAssignments(data);
 		},
 
-		createBulkAssignments: function (oPayload) {
+		// createBulkAssignments: function (oPayload) {
 
+		// 	var that = this;
+		// 	that.dp = this.dp;
+		// 	BusyIndicator.show(2);
+		// 	var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
+		// 	var oJsonModel = new sap.ui.model.json.JSONModel();
+
+		// 	/*		var sPath = "";
+		// 			if (this.action === 'Absence') {*/
+		// 	var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/roster/rosterAssignment/handlePostRosterAssignments";
+		// 	/*		} else if (this.action === 'Timesheet') {
+		// 				sPath = "/Manning/viking/scheduling/tools/integration/AuditReport/TimesheetCorrection.xsjs";
+		// 			}*/
+
+		// 	oJsonModel.loadData(sPath, JSON.stringify(oPayload), true,
+		// 		"POST", false, false, oHeader);
+		// 	oJsonModel.attachRequestCompleted(null, function (jsonData) {
+		// 		BusyIndicator.hide();
+		// 		if (oJsonModel.getData().data.status === 'SUCCESS') {
+		// 			//	that.getView().getModel("local").setProperty("/range", true);
+		// 			//	console.log(oJsonModel.getData());
+
+		// 			MessageToast.show("Successfully Updated");
+
+		// 			that.onSearch();
+		// 		} else {
+		// 			that.showErrorMessages(oJsonModel.getData().data.results);
+		// 			//MessageToast.show("Not able to update the records.");
+		// 			BusyIndicator.hide();
+		// 		}
+		// 	});
+		// },
+		createBulkAssignments: function (oPayload) {
 			var that = this;
-			that.dp = this.dp;
-			BusyIndicator.show();
-			var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
+			BusyIndicator.show(2);
+
+			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") +
+				"/api/roster/rosterAssignment/handlePostRosterAssignments";
+
 			var oJsonModel = new sap.ui.model.json.JSONModel();
 
-			/*		var sPath = "";
-					if (this.action === 'Absence') {*/
-			var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment?cmd=handlePostRosterAssignments";
-			/*		} else if (this.action === 'Timesheet') {
-						sPath = "/Manning/viking/scheduling/tools/integration/AuditReport/TimesheetCorrection.xsjs";
-					}*/
+			oJsonModel.loadData(
+				sPath,
+				JSON.stringify(oPayload),
+				true,   // async
+				"POST", // method
+				false,  // cache
+				false,  // merge
+				{ "Content-Type": "application/json" }
+			);
 
-			oJsonModel.loadData(sPath, JSON.stringify(oPayload), true,
-				"POST", false, false, oHeader);
-			oJsonModel.attachRequestCompleted(null, function (jsonData) {
+			oJsonModel.attachRequestCompleted(function () {
 				BusyIndicator.hide();
-				if (oJsonModel.getData().data.status === 'SUCCESS') {
-					//	that.getView().getModel("local").setProperty("/range", true);
-					//	console.log(oJsonModel.getData());
 
+				var oResponse = oJsonModel.getData();
+
+				// Handle both formats
+				var status = oResponse?.data?.status || oResponse?.status;
+				var results = oResponse?.data?.results || oResponse?.results || [];
+
+				if (status === "SUCCESS" || status === 201) {
 					MessageToast.show("Successfully Updated");
-
 					that.onSearch();
 				} else {
-					that.showErrorMessages(oJsonModel.getData().data.results);
-					//MessageToast.show("Not able to update the records.");
-					BusyIndicator.hide();
+					if (results.length > 0) {
+						that.showErrorMessages(results);
+					} else {
+						MessageToast.show("Not able to update the records.");
+					}
 				}
 			});
-		},
 
+			oJsonModel.attachRequestFailed(function () {
+				BusyIndicator.hide();
+				MessageToast.show("Service call failed. Please try again.");
+			});
+		},
 		showErrorMessages: function (data) {
 			var oView = this.getView();
 			var oModel = new sap.ui.model.json.JSONModel(data);
@@ -879,6 +973,7 @@ sap.ui.define([
 		handleFgErrorsClose: function () {
 			this._valueHelpDialogErrors.close();
 		},
+
 		onExportExcel: function () {
 			var oDateFormat = sap.ui.core.format.DateFormat.getInstance({
 				pattern: "MM/dd/yyyy"
@@ -919,6 +1014,7 @@ sap.ui.define([
 					oSheet.destroy();
 				});
 		},
+
 		dateFormatDisplayLong: function (dateValue) {
 			var date;
 			if (dateValue) {
@@ -927,6 +1023,7 @@ sap.ui.define([
 			}
 			return date;
 		},
+
 		createColumnConfigDownload: function () {
 			return [{
 				label: "Roster Name",
@@ -965,6 +1062,7 @@ sap.ui.define([
 			};
 			return oHeader;
 		},
+
 		fetchTokenForSubmit: function (requestUrl) {
 			var token = "";
 			$.ajax({
@@ -983,6 +1081,7 @@ sap.ui.define([
 			});
 			return token;
 		},
+
 		_convertToUTC: function (o) {
 			if (!o) {
 				return o;

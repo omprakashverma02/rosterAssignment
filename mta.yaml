@@ -55,7 +55,7 @@ modules:
     builder: custom
     commands:
     - npm install
-    - npm run build:cf
+    - npm run build
     supported-platforms: []
 resources:
 - name: rosterassignmentvk-destination-service
