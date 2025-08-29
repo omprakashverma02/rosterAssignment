@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/export/library",
 	"sap/m/List",
 	"sap/m/StandardListItem",
-	"../util/service"
+	"../util/service",
+
 ], function (Controller, BusyIndicator, JSONModel, MessageToast, MessageBox, Dialog, mlibrary, Button, Text, formatter, Spreadsheet,
 	exportLibrary, List, StandardListItem, ServiceHandler) {
 	"use strict";
@@ -820,25 +821,56 @@ sap.ui.define([
 			reader.readAsBinaryString(file);
 		},
 
+		// excelDateConvert: function (excelDate) {
+		// 	if (excelDate) {
+		// 		if (excelDate != "" || excelDate != undefined) {
+		// 			var dateComponents = excelDate.split("/");
+		// 			var year = parseInt(dateComponents[2]) + 2000;
+		// 			var day = parseInt(dateComponents[1]);
+		// 			var month = parseInt(dateComponents[0]) - 1;
+		// 			var date = new Date(year, month, day);
+		// 			var options = {
+		// 				day: '2-digit',
+		// 				month: '2-digit',
+		// 				year: 'numeric'
+		// 			};
+		// 			var formattedDate = date.toLocaleDateString('en-GB', options);
+		// 			var dateSplit = formattedDate.split('/');
+		// 			var finalDate = dateSplit[2].concat('-', dateSplit[1]).concat('-', dateSplit[0]);
+		// 			return finalDate;
+		// 		}
+		// 	}
+		// },
 		excelDateConvert: function (excelDate) {
-			if (excelDate) {
-				if (excelDate != "" || excelDate != undefined) {
-					var dateComponents = excelDate.split("/");
-					var year = parseInt(dateComponents[2]) + 2000;
-					var day = parseInt(dateComponents[1]);
-					var month = parseInt(dateComponents[0]) - 1;
+			if (!excelDate) {
+				return null;
+			}
+
+			// Case 1: If excelDate is a number (Excel serial date)
+			if (typeof excelDate === "number") {
+				// Excel's base date = 1900-01-01
+				var date = new Date(Math.round((excelDate - 25569) * 86400 * 1000));
+				// Format to YYYY-MM-DD
+				return date.toISOString().split("T")[0];
+			}
+
+			// Case 2: If excelDate is a string (e.g., "09/01/25")
+			if (typeof excelDate === "string") {
+				var dateComponents = excelDate.split("/");
+				if (dateComponents.length === 3) {
+					var year = parseInt(dateComponents[2], 10);
+					// Handle 2-digit year → add 2000
+					if (year < 100) {
+						year += 2000;
+					}
+					var day = parseInt(dateComponents[1], 10);
+					var month = parseInt(dateComponents[0], 10) - 1;
 					var date = new Date(year, month, day);
-					var options = {
-						day: '2-digit',
-						month: '2-digit',
-						year: 'numeric'
-					};
-					var formattedDate = date.toLocaleDateString('en-GB', options);
-					var dateSplit = formattedDate.split('/');
-					var finalDate = dateSplit[2].concat('-', dateSplit[1]).concat('-', dateSplit[0]);
-					return finalDate;
+					return date.toISOString().split("T")[0]; // YYYY-MM-DD
 				}
 			}
+
+			return null;
 		},
 
 		dateConvert: function (date) {
@@ -958,7 +990,7 @@ sap.ui.define([
 			// create value help dialog
 			if (!this._valueHelpDialogErrors) {
 				this._valueHelpDialogErrors = sap.ui.xmlfragment(this.createId("idUniqueFragErrors"),
-					"rosterassignment.rosterassignment.view.fragment.errorMessages",
+					"rosterassignmentvk.rosterassignmentvk.view.fragment.errorMessages",
 					this
 				);
 				this.getView().addDependent(this._valueHelpDialogErrors);
