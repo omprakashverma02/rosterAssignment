@@ -643,9 +643,7 @@ sap.ui.define([
 				pattern: "MM/dd/yyyy"
 			}); //Returns a DateFormat instance for date
 			var fileName = oDateFormat.format(new Date()).toString();
-			//	var aData = this.getView().getModel("AbsenceTimesheet").getData();
 			var item = [];
-			//	aData = "";
 			var aData = {
 				ROSTER_NAME: "",
 				ROSTER_CODE: "",
@@ -750,33 +748,9 @@ sap.ui.define([
 							}
 							processedData.push(obj);
 						}
-
-						//	var oModel = new sap.ui.model.json.JSONModel(processedData);
-						//	this.getView().setModel(oModel);
 					});
 					var item = [];
 					for (var i = 0; i < processedData.length; i++) {
-						/*			if (excelData[i].ROSTER_NAME === "" || excelData[i].ROSTER_NAME === undefined) {
-										concat("Please enter roster name at row no : ", i)
-										MessageToast.show("Please enter roster name at row no : ");
-										return;
-									}
-									if (excelData[i].Roster_Code === "" || excelData[i].Roster_Code === undefined) {
-										MessageToast.show("Please enter roster code at row no : ");
-										return;
-									}
-									if (excelData[i].SHIP === "" || excelData[i].SHIP === undefined) {
-										MessageToast.show("Please enter ship at row no : ");
-										return;
-									}*/
-						/*			if (processedData[i].START_DATE === "" || processedData[i].START_DATE === undefined) {
-										MessageToast.show("Please enter effective start date at row no : ");
-										return;
-									}*/
-						/*	if (excelData[i].EFFECTIVE_END_DATE === "" || excelData[i].EFFECTIVE_END_DATE === undefined) {
-								MessageToast.show("Please enter effective end date at row no : ");
-								return;
-							}*/
 						var requestData = {
 							//		"ROSTER_NAME": sap.ui.core.Fragment.byId(this.createId("idUniqueFragRosterAssignment"), "idFragChooseRosterName").getValue(),
 							"ROSTER_NAME": processedData[i].ROSTER_NAME,
@@ -821,26 +795,6 @@ sap.ui.define([
 			reader.readAsBinaryString(file);
 		},
 
-		// excelDateConvert: function (excelDate) {
-		// 	if (excelDate) {
-		// 		if (excelDate != "" || excelDate != undefined) {
-		// 			var dateComponents = excelDate.split("/");
-		// 			var year = parseInt(dateComponents[2]) + 2000;
-		// 			var day = parseInt(dateComponents[1]);
-		// 			var month = parseInt(dateComponents[0]) - 1;
-		// 			var date = new Date(year, month, day);
-		// 			var options = {
-		// 				day: '2-digit',
-		// 				month: '2-digit',
-		// 				year: 'numeric'
-		// 			};
-		// 			var formattedDate = date.toLocaleDateString('en-GB', options);
-		// 			var dateSplit = formattedDate.split('/');
-		// 			var finalDate = dateSplit[2].concat('-', dateSplit[1]).concat('-', dateSplit[0]);
-		// 			return finalDate;
-		// 		}
-		// 	}
-		// },
 		excelDateConvert: function (excelDate) {
 			if (!excelDate) {
 				return null;
@@ -884,61 +838,9 @@ sap.ui.define([
 		},
 
 		createMassRosterAssignments: function (data) {
-			/*		var item = [];
-					for (var i = 0; i < data.length; i++) {
-						var reqPayload = {
-							"ROSTER_NAME": data[i].ROSTER_NAME,
-							"ROSTER_CODE": data[i].ROSTER_CODE,
-							"SHIP": data[i].SHIP,
-							"EFFECTIVE_START_DATE": data[i].EFFECTIVE_START_DATE,
-							"EFFECTIVE_END_DATE": data[i].EFFECTIVE_END_DATE,
-							"ASSIGNMENT_STATUS": "No",
-							"ASSIGNMENT_ON": this.formatDateAsString(new Date(), "yyyy-MM-ddThh:MM:ss"),
-							"ASSIGNMENT_BY": this._getCurrentUser().name
-						};
-						item.push(reqPayload);
-					}
-					var completeDataObj = {
-						"reqPayload": item
-
-					};*/
-
 			this.createBulkAssignments(data);
 		},
 
-		// createBulkAssignments: function (oPayload) {
-
-		// 	var that = this;
-		// 	that.dp = this.dp;
-		// 	BusyIndicator.show(2);
-		// 	var oHeader = this._fnHeaders(sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/rosterAssignment");
-		// 	var oJsonModel = new sap.ui.model.json.JSONModel();
-
-		// 	/*		var sPath = "";
-		// 			if (this.action === 'Absence') {*/
-		// 	var sPath = sap.ui.require.toUrl("rosterassignmentvk/rosterassignmentvk") + "/api/roster/rosterAssignment/handlePostRosterAssignments";
-		// 	/*		} else if (this.action === 'Timesheet') {
-		// 				sPath = "/Manning/viking/scheduling/tools/integration/AuditReport/TimesheetCorrection.xsjs";
-		// 			}*/
-
-		// 	oJsonModel.loadData(sPath, JSON.stringify(oPayload), true,
-		// 		"POST", false, false, oHeader);
-		// 	oJsonModel.attachRequestCompleted(null, function (jsonData) {
-		// 		BusyIndicator.hide();
-		// 		if (oJsonModel.getData().data.status === 'SUCCESS') {
-		// 			//	that.getView().getModel("local").setProperty("/range", true);
-		// 			//	console.log(oJsonModel.getData());
-
-		// 			MessageToast.show("Successfully Updated");
-
-		// 			that.onSearch();
-		// 		} else {
-		// 			that.showErrorMessages(oJsonModel.getData().data.results);
-		// 			//MessageToast.show("Not able to update the records.");
-		// 			BusyIndicator.hide();
-		// 		}
-		// 	});
-		// },
 		createBulkAssignments: function (oPayload) {
 			var that = this;
 			BusyIndicator.show(2);
