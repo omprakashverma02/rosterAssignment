@@ -22,15 +22,15 @@ modules:
       instance:
         destinations:
         - Name: rosterassignmentvk_html_repo_host
-          ServiceInstanceName: rosterassignmentvk-html5-srv
+          ServiceInstanceName: rosterassignmentvk-html5-service
           ServiceKeyName: rosterassignmentvk-repo-host-key
           sap.cloud.service: rosterassignmentvk
         - Authentication: OAuth2UserTokenExchange
           Name: rosterassignmentvk_uaa
-          ServiceInstanceName: rosterassignmentvk-xsuaa-srv
+          ServiceInstanceName: rosterassignmentvk-xsuaa-service
           ServiceKeyName: rosterassignmentvk-uaa-key
           sap.cloud.service: rosterassignmentvk
-        existing_destinations_policy: ignore
+        existing_destinations_policy: update
   build-parameters:
     no-source: true
 - name: rosterassignmentvk-app-content
@@ -55,7 +55,7 @@ modules:
     builder: custom
     commands:
     - npm install
-    - npm run build
+    - npm run build:cf
     supported-platforms: []
 resources:
 - name: rosterassignmentvk-destination-service
@@ -81,13 +81,13 @@ resources:
   parameters:
     path: ./xs-security.json
     service: xsuaa
-    service-name: rosterassignmentvk-xsuaa-srv
+    service-name: rosterassignmentvk-xsuaa-service
     service-plan: application
 - name: rosterassignmentvk-repo-host
   type: org.cloudfoundry.managed-service
   parameters:
     service: html5-apps-repo
-    service-name: rosterassignmentvk-html5-srv
+    service-name: rosterassignmentvk-html5-service
     service-plan: app-host
 parameters:
   deploy_mode: html5-repo
